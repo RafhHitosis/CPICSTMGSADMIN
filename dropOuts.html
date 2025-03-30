@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="assets/img/logo_.png">
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<title>Drop Outs</title>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
+	<style>
+		body {
+			font-family: 'Open Sans', sans-serif;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			padding: 10px;
+			text-align: left;
+		}
+
+		#withdrawnTable tbody tr:nth-child(even) {
+			background-color: gainsboro;
+			/* Adjust color as needed */
+		}
+
+		.loadBtn {
+			padding: 5px;
+			border-radius: 6px;
+			border: none;
+			color: white;
+			cursor: pointer;
+			background-color: #4CAF50;
+		}
+
+			/* File Upload Dialog */
+.file-upload-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 1000;
+    display: none;
+    border-radius: 10px;
+}
+
+.file-upload-dialog.show {
+    display: block;
+}
+
+.file-upload-dialog.hide {
+    display: none;
+}
+
+.file-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-upload-content h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.file-upload-content input[type="file"] {
+    margin-bottom: 20px;
+}
+
+#uploadStatus {
+    margin-top: 10px;
+    color: green;
+}
+	</style>
+</head>
+
+<body>
+
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand"><img src="assets/img/logo_.png" style="height: 40px; width: 30px; margin-left: 10px;">
+			&nbsp;&nbsp;&nbsp;Admin</a>
+		<ul class="side-menu">
+			<li><a href="Dashboard.html"><i class='bx bxs-dashboard icon'></i> Dashboard</a></li>
+			<li class="divider" data-text="main">Main</li>
+			<li><a href="setDuration.html"><i class='bx bxs-time icon'></i> Set Duration</a></li>
+			<li><a href="subjects.html"><i class='bx bxs-book icon'></i> Subjects</a></li>
+			<li><a href="grades.html"><i class='bx bxs-pen icon'></i> Grades</a></li>
+			<li>
+				<a href="#"><i class='bx bxs-user-detail icon'></i> User Accounts <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="instructors.html"><i class='bx bxs-briefcase'></i>&nbsp;&nbsp;&nbsp;Instructor</a></li>
+					<li><a href="students.html"><i class='bx bxs-bus'></i>&nbsp;&nbsp;&nbsp;Students</a></li>
+				</ul>
+			</li>
+			<li class="divider" data-text="Reports">Reports</li>
+			<li>
+				<a href="#" class="active"><i class='bx bxs-notepad icon'></i> Grades Summary <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="dropOuts.html"><i class='bx bxs-detail'></i>&nbsp;&nbsp;&nbsp;Drop-outs</a></li>
+					<li><a href="studentCompletionForm.html"><i class='bx bxs-receipt'></i>&nbsp;&nbsp;&nbsp;Completion Form</a></li>
+					<li><a href="studentDeficiency.html"><i class='bx bxs-report'></i>&nbsp;&nbsp;&nbsp;Student Deficiency</a></li>
+					<li><a href="RTSemestralGrade.html"><i class='bx bxs-pencil'></i>&nbsp;&nbsp;&nbsp;Semestral
+							Grades</a></li>
+					<!-- <li><a href="#">Checkbox</a></li>
+					<li><a href="#">Radio</a></li> -->
+				</ul>
+			</li>
+			<li><a href="#" id="uploadFilesButton"><i class='bx bxs-file icon'></i> Upload Files</a></li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+
+	<!-- NAVBAR -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu toggle-sidebar'></i>
+			<form action="#">
+				<div class="form-group">
+					<!-- <input type="text" placeholder="Search...">
+					<i class='bx bx-search icon'></i> -->
+				</div>
+			</form>
+			<a href="#" class="nav-link notification-bell">
+				<i class='bx bxs-bell icon'></i>
+				<span class="badge"></span>
+			</a>
+			<div class="dropdown-menu notifications-dropdown hide">
+				<h4>Instructor Requests</h4>
+				<ul id="requestList">
+					<!-- Instructor request categories will be populated here -->
+				</ul>
+			</div>	
+			<!-- <a href="#" class="nav-link">
+				<i class='bx bxs-message-square-dots icon'></i>
+				<span class="badge">8</span>
+			</a> -->
+			<span class="divider"></span>
+			<div class="profile">
+				<img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cGVvcGxlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+					alt="">
+				<ul class="profile-link">
+					<li><a href="changePassword.html"><i class='bx bxs-cog'></i> Change Password</a></li>
+					<li><a href="#" onclick="logout()"><i class='bx bxs-log-out-circle'></i> Logout</a></li>
+				</ul>
+			</div>
+		</nav>
+		<!-- NAVBAR -->
+
+		<!-- MAIN -->
+		<main>
+			<h1 class="title">Drop-Outs</h1>
+			<ul class="breadcrumbs">
+				<li><a href="#">Grades Summary</a></li>
+				<li class="divider">/</li>
+				<li><a href="#" class="active">Drop-Outs</a></li>
+			</ul>
+
+			<br>
+
+			<!-- Dropdown for Semester -->
+			<label for="semesterSelect">Select Semester:</label>
+			<select id="semesterSelect" style="margin-bottom: 14px;">
+				<option value="">Select Semester</option>
+				<option value="1stsem">First Semester</option>
+				<option value="2ndsem">Second Semester</option>
+				<option value="summer">Summer</option>
+				<option value="midyear">Mid Year Term</option>
+			</select>
+
+			<!-- Dropdown for Academic Year -->
+			<label for="yearSelect">Select Academic Year:</label>
+			<select id="yearSelect" style="margin-bottom: 14px;">
+				<option value="">Select Academic Year</option>
+				<option value="2425">2024-2025</option>
+				<option value="2324">2023-2024</option>
+				<option value="2223">2022-2023</option>
+				<!-- Add more options as needed -->
+			</select>
+
+			<button id="loadDataBtn" class="loadBtn">Load Data</button>
+
+			<div class="content-data">
+				<table id="withdrawnTable" style="width:100%" class="display nowrap">
+					<thead>
+						<tr>
+							<th>Student Name</th>
+							<th>Subject Code</th>
+							<th>Description</th>
+							<th>ID</th>
+							<th>Reason</th>
+							<th>Remarks</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+
+
+						<!-- File Upload Dialog -->
+<div id="fileUploadDialog" class="file-upload-dialog hide">
+    <div class="file-upload-content">
+        <h2>Upload File</h2>
+        <form id="fileUploadForm">
+            <input type="file" id="fileInput" />
+            <button type="button" id="uploadButton">Upload</button>
+            <button type="button" id="closeDialogButton">Close</button>
+        </form>
+        <div id="uploadStatus"></div> <!-- For displaying upload status -->
+    </div>
+</div>
+
+
+		</main>
+		<!-- MAIN -->
+	</section>
+	<!-- NAVBAR -->
+
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+	<!-- DataTables JS -->
+	<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+	<script type="module">
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+		import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+		// Firebase configuration
+		const firebaseConfig = {
+			apiKey: "AIzaSyAgplxh789FO-NDxHmKA49ro71tjYBU-JE",
+			authDomain: "icstmgsdb.firebaseapp.com",
+			databaseURL: "https://icstmgsdb-default-rtdb.firebaseio.com",
+			projectId: "icstmgsdb",
+			storageBucket: "icstmgsdb.appspot.com",
+			messagingSenderId: "619240877167",
+			appId: "1:619240877167:web:9402346b3d9e6e1f57b19a"
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const database = getDatabase(app);
+
+		// Function to populate the academic year/semester dropdown
+		const populateGradeSelect = () => {
+			const gradeSelect = document.getElementById('gradeSelect'); // Fix: reference to gradeSelect
+			const gradesRef = ref(database, 'grades');
+
+			get(gradesRef).then(snapshot => {
+				if (snapshot.exists()) {
+					const gradesData = snapshot.val();
+					for (let gradeKey in gradesData) {
+						const option = document.createElement('option');
+						option.value = gradeKey;
+						option.textContent = gradeKey;
+						gradeSelect.appendChild(option);
+					}
+				}
+			}).catch(error => {
+				console.error('Error fetching grades:', error);
+			});
+		};
+
+		// Call the function to populate the dropdown on page load
+		populateGradeSelect();
+
+		// Function to load the data based on selected semester and academic year
+		const loadData = () => {
+			const selectedSemester = document.getElementById('semesterSelect').value;
+			const selectedYear = document.getElementById('yearSelect').value;
+
+			// Ensure both dropdowns are selected
+			if (!selectedSemester || !selectedYear) {
+				alert("Please select both semester and academic year.");
+				return;
+			}
+
+			// Construct the database path using the selected semester and academic year
+			const databasePath = `grade${selectedYear}_${selectedSemester}`;
+			const gradesRef = ref(database, `grades/${databasePath}/data`);
+			const subjectsRef = ref(database, 'subjects');
+			const studentsInfoRef = ref(database, 'studentInfo/data');
+
+			const tableBody = document.querySelector('#withdrawnTable tbody');
+			tableBody.innerHTML = '';
+
+			Promise.all([
+				get(gradesRef),
+				get(subjectsRef),
+				get(studentsInfoRef)
+			]).then(([gradesSnapshot, subjectsSnapshot, studentsInfoSnapshot]) => {
+				if (gradesSnapshot.exists()) {
+					const studentsData = gradesSnapshot.val();
+					const subjectsData = subjectsSnapshot.val();
+					const studentsInfo = studentsInfoSnapshot.val();
+
+					studentsData.forEach(student => {
+						// Check if the student is withdrawn based on remarks
+						const isWithdrawn = student.remarks && student.remarks.toLowerCase().includes("withdrawn");
+
+						if (isWithdrawn) {
+							const withdrawalMatch = student.remarks.match(/(Authorized|Unauthorized)\s+Withdrawn\s+on\s+(\d{2}-\d{2}-\d{2})/i);
+							const withdrawalType = withdrawalMatch ? withdrawalMatch[1] : 'Unknown';
+							const withdrawalDate = withdrawalMatch ? withdrawalMatch[2] : 'N/A';
+
+							let subjectCode = 'N/A';
+							let subjectDescription = 'N/A';
+
+							// Find subject data based on the student's ID
+							for (const semesterKey in subjectsData) {
+								const semesterSubjects = subjectsData[semesterKey];
+								for (const subjCode in semesterSubjects) {
+									if (semesterSubjects[subjCode].id === student.id) {
+										subjectCode = subjCode;
+										subjectDescription = semesterSubjects[subjCode].description;
+										break;
+									}
+								}
+								if (subjectCode !== 'N/A') break;
+							}
+
+							// Get student name from the new structure in studentInfo
+							const studentInfo = studentsInfo.find(info => info.StudNum === student.studnum);
+							const studentName = studentInfo
+								? `${studentInfo.Fname} ${studentInfo.Mname} ${studentInfo.Lname}`
+								: 'Unknown Student';
+
+							// Insert the row in the table with the student's data
+							const row = document.createElement('tr');
+							row.innerHTML = `
+						<td>${studentName}</td>
+						<td>${subjectCode}</td>
+						<td>${subjectDescription}</td>
+						<td>${student.id}</td>
+						<td>${withdrawalType} Withdrawn</td>
+						<td>${withdrawalDate}</td>
+					`;
+							tableBody.appendChild(row);
+						}
+					});
+
+					// Initialize DataTable with export buttons
+					$('#withdrawnTable').DataTable({
+						"scrollX": true,
+						"paging": true,
+						"searching": true,
+						"scrollY": 400,
+						dom: 'Bfrtip',
+						buttons: [
+							{
+								extend: 'excelHtml5',
+								text: 'Export to Excel',
+								title: 'Drop Outs Data'
+							},
+							{
+								extend: 'pdfHtml5',
+								text: 'Export to PDF',
+								title: 'Drop Outs Data'
+							},
+							{
+								extend: 'print',
+								text: 'Print',
+								title: 'Drop Outs Data'
+							}
+						]
+					});
+				} else {
+					alert('No data available for the selected academic year/semester.');
+				}
+			}).catch(error => {
+				console.error('Error fetching data:', error);
+			});
+		};
+
+		// Event listener for loading data
+		document.getElementById('loadDataBtn').addEventListener('click', loadData);
+
+
+		// Logout function
+		const logout = () => {
+			// Implement logout logic
+			alert('Logout successful!'); // Placeholder for logout logic
+		};
+	</script>
+	<script>
+		// Get logged-in username from localStorage
+		const username = localStorage.getItem('username');
+		if (!username) {
+			window.location.href = 'login.html';  // Redirect to login if not logged in
+		}
+		function logout() {
+			localStorage.removeItem('isLoggedIn');
+			localStorage.removeItem('username');
+			window.location.href = 'login.html';
+		}
+	</script>
+	<script type="module" src="assets/js/upload.js"></script>
+	<script src="assets/js/script.js"></script>
+</body>
+
+</html>

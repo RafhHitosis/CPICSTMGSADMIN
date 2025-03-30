@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="assets/img/logo_.png">
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="font-family" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
+	<title>Subjects</title>
+	<style>
+		body {
+			font-family: 'Open Sans', sans-serif;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			padding: 10px;
+			text-align: left;
+		}
+
+		#subjectsTable tbody tr:nth-child(even) {
+			background-color: gainsboro;
+			/* Adjust color as needed */
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			padding: 20px;
+			background-color: white;
+			border: 1px solid #ccc;
+			z-index: 1000;
+		}
+
+		.modal.show {
+			display: block;
+		}
+
+		.modal-overlay {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.5);
+			z-index: 999;
+		}
+
+		.modal-overlay.show {
+			display: block;
+		}
+
+		#addSubjectBtn {
+			background-color: #4CAF50;
+			border: none;
+			color: white;
+			margin-bottom: 10px;
+			margin-top: 20px;
+			padding: 10px;
+			border-radius: 6px;
+		}
+
+		.editBtn {
+			background-color: #4CAF50;
+			color: white;
+			padding: 7px;
+			border-radius: 6px;
+			border: none;
+			align-items: center;
+			text-align: center;
+			margin: auto;
+			display: flex;
+		}
+		/* File Upload Dialog */
+.file-upload-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 1000;
+    display: none;
+    border-radius: 10px;
+}
+
+.file-upload-dialog.show {
+    display: block;
+}
+
+.file-upload-dialog.hide {
+    display: none;
+}
+
+.file-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-upload-content h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.file-upload-content input[type="file"] {
+    margin-bottom: 20px;
+}
+
+#uploadStatus {
+    margin-top: 10px;
+    color: green;
+}
+	</style>
+</head>
+
+<body>
+
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand"><img src="assets/img/logo_.png" style="height: 40px; width: 30px; margin-left: 10px;"> &nbsp;&nbsp;&nbsp;Admin</a>
+		<ul class="side-menu">
+			<li><a href="Dashboard.html"><i class='bx bxs-dashboard icon'></i> Dashboard</a></li>
+			<li class="divider" data-text="main">Main</li>
+			<li><a href="setDuration.html"><i class='bx bxs-time icon'></i> Set Duration</a></li>
+			<li><a href="subjects.html" class="active"><i class='bx bxs-book icon'></i> Subjects</a></li>
+			<li><a href="grades.html"><i class='bx bxs-pen icon'></i> Grades</a></li>
+			<li>
+				<a href="#"><i class='bx bxs-user-detail icon'></i> User Accounts <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="instructors.html"><i class='bx bxs-briefcase icon'></i>Instructor</a></li>
+					<li><a href="students.html"><i class='bx bxs-bus icon'></i>Students</a></li>
+				</ul>
+			</li>
+			<li class="divider" data-text="Reports">Reports</li>
+			<li>
+				<a href="#"><i class='bx bxs-notepad icon'></i> Grades Summary <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="dropOuts.html"><i class='bx bxs-detail'></i>&nbsp;&nbsp;&nbsp;Drop-outs</a></li>
+					<li><a href="studentCompletionForm.html"><i class='bx bxs-receipt'></i>&nbsp;&nbsp;&nbsp;Completion Form</a></li>
+					<li><a href="studentDeficiency.html"><i class='bx bxs-report'></i>&nbsp;&nbsp;&nbsp;Student Deficiency</a></li>
+					<li><a href="RTSemestralGrade.html"><i class='bx bxs-pencil'></i>&nbsp;&nbsp;&nbsp;Semestral Grades</a></li>
+					<!-- <li><a href="#">Checkbox</a></li>
+					<li><a href="#">Radio</a></li> -->
+				</ul>
+			</li>
+			<li><a href="#" id="uploadFilesButton"><i class='bx bxs-file icon'></i> Upload Files</a></li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+
+	<!-- NAVBAR -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu toggle-sidebar'></i>
+			<form action="#">
+				<div class="form-group">
+					<input type="text" id="searchInput" placeholder="Search subjects...">
+					<i class='bx bx-search icon'></i>
+				</div>
+			</form>
+			<a href="#" class="nav-link notification-bell">
+				<i class='bx bxs-bell icon'></i>
+				<span class="badge"></span>
+			</a>
+			<div class="dropdown-menu notifications-dropdown hide">
+				<h4>Instructor Requests</h4>
+				<ul id="requestList">
+					<!-- Instructor request categories will be populated here -->
+				</ul>
+			</div>	
+			<!-- <a href="#" class="nav-link">
+				<i class='bx bxs-message-square-dots icon'></i>
+				<span class="badge">8</span>
+			</a> -->
+			<span class="divider"></span>
+			<div class="profile">
+				<img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cGVvcGxlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+					alt="">
+				<ul class="profile-link">
+					<li><a href="changePassword.html"><i class='bx bxs-cog'></i> Change Password</a></li>
+					<li><a href="#" onclick="logout()"><i class='bx bxs-log-out-circle'></i> Logout</a></li>
+				</ul>
+			</div>
+		</nav>
+		<!-- NAVBAR -->
+
+		<!-- MAIN -->
+		<main>
+			<h1 class="title">Subjects</h1>
+			<ul class="breadcrumbs">
+				<li><a href="#">Home</a></li>
+				<li class="divider">/</li>
+				<li><a href="#" class="active">Subjects</a></li>
+			</ul>
+
+			
+				<div class="content-data">
+					<button id="addSubjectBtn">Add Subject</button>
+					<table id="subjectsTable" style="width:100%" class="display nowrap">
+						<thead>
+							<tr>
+								<th>Subject Code</th>
+								<th>Description</th>
+								<th>ID</th>
+								<th>Course</th>
+								<th>Semester</th>
+								<th>Curriculum</th>
+								<th>Instructor</th>
+								<th>Year Level</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody id="subjectsBody">
+							<!-- Subject rows will be inserted here -->
+						</tbody>
+					</table>
+				</div>
+			
+
+			<!-- Modal for adding subject -->
+			<div class="modal-overlay" id="modalOverlay"></div>
+			<div class="modal" id="addSubjectModal">
+				<h2>Add New Subject</h2>
+
+				<label for="course">Course:</label>
+				<select id="course">
+					<option value="">Select Course</option>
+					<option value="BSIT">BSIT</option>
+					<option value="BSCRIM">BSCRIM</option>
+					<option value="BSBA">BSBA</option>
+					<option value="BEED">BEED</option>
+					<option value="BSED">BSED</option>
+					<option value="BSHM">BSHM</option>
+				</select>
+				<br><br>
+
+				<label for="subjectCode">Subject Code:</label>
+				<input type="text" id="subjectCode" placeholder="Enter Subject Code">
+				<br><br>
+
+				<label for="description">Description:</label>
+				<input type="text" id="description" placeholder="Enter Description">
+				<br><br>
+
+				<label for="id">ID:</label>
+				<input type="text" id="id" placeholder="Enter Subject ID">
+				<br><br>
+
+				<label for="semester">Semester:</label>
+				<select id="semester">
+					<option value="">Select Semester</option>
+					<option value="First Semester">First Semester</option>
+					<option value="Second Semester">Second Semester</option>
+					<option value="Summer">Summer</option>
+					<option value="Midyear Term">Midyear Term</option>
+				</select>
+				<br><br>
+
+				<label for="curriculum">Curriculum:</label>
+				<input type="number" id="curriculum" placeholder="Enter 4-digit Curriculum Year" maxlength="4" oninput="validateCurriculum(this)">
+				<br><br>
+
+				<label for="instructor">Instructor:</label>
+				<input type="text" id="instructor" placeholder="Enter Instructor Name">
+				<br><br>
+
+				<label for="yearLevel">Year Level:</label>
+				<select id="yearLevel">
+					<option value="">Select Year Level</option>
+					<option value="First Year">First Year</option>
+					<option value="Second Year">Second Year</option>
+					<option value="Third Year">Third Year</option>
+					<option value="Fourth Year">Fourth Year</option>
+				</select>
+				<br><br>
+
+				<button id="saveSubjectBtn">Save Subject</button>
+				<button id="closeModalBtn">Close</button>
+			</div>
+
+
+
+
+
+			<!-- Modal for editing subject -->
+<div class="modal-overlay" id="editModalOverlay"></div>
+<div class="modal" id="editSubjectModal">
+    <h2>Edit Subject</h2>
+
+    <label for="editCourse">Course:</label>
+    <select id="editCourse">
+        <option value="">Select Course</option>
+        <option value="BSIT">BSIT</option>
+        <option value="BSCRIM">BSCRIM</option>
+        <option value="BSBA">BSBA</option>
+        <option value="BEED">BEED</option>
+        <option value="BSED">BSED</option>
+        <option value="BSHM">BSHM</option>
+    </select>
+    <br><br>
+
+    <label for="editSubjectCode">Subject Code:</label>
+    <input type="text" id="editSubjectCode" disabled>
+    <br><br>
+
+    <label for="editDescription">Description:</label>
+    <input type="text" id="editDescription">
+    <br><br>
+
+    <label for="editID">ID:</label>
+    <input type="text" id="editID" disabled>
+    <br><br>
+
+    <label for="editSemester">Semester:</label>
+    <select id="editSemester">
+        <option value="">Select Semester</option>
+        <option value="First Semester">First Semester</option>
+        <option value="Second Semester">Second Semester</option>
+        <option value="Summer">Summer</option>
+        <option value="Midyear Term">Midyear Term</option>
+    </select>
+    <br><br>
+
+    <label for="editCurriculum">Curriculum:</label>
+    <input type="number" id="editCurriculum" maxlength="4" oninput="validateCurriculum(this)">
+    <br><br>
+
+    <label for="editInstructor">Instructor:</label>
+    <input type="text" id="editInstructor">
+    <br><br>
+
+    <label for="editYearLevel">Year Level:</label>
+    <select id="editYearLevel">
+        <option value="">Select Year Level</option>
+        <option value="First Year">First Year</option>
+        <option value="Second Year">Second Year</option>
+        <option value="Third Year">Third Year</option>
+        <option value="Fourth Year">Fourth Year</option>
+    </select>
+    <br><br>
+
+    <button id="updateSubjectBtn">Update Subject</button>
+    <button id="closeEditModalBtn">Close</button>
+</div>
+
+
+						<!-- File Upload Dialog -->
+						<div id="fileUploadDialog" class="file-upload-dialog hide">
+							<div class="file-upload-content">
+								<h2>Upload File</h2>
+								<form id="fileUploadForm">
+									<input type="file" id="fileInput" />
+									<button type="button" id="uploadButton">Upload</button>
+									<button type="button" id="closeDialogButton">Close</button>
+								</form>
+								<div id="uploadStatus"></div> <!-- For displaying upload status -->
+							</div>
+						</div>
+
+		</main>
+		<!-- MAIN -->
+	</section>
+	<!-- NAVBAR -->
+
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+	<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+	<script type="module">
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+		import { getDatabase, ref, get, set, push } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+		const firebaseConfig = {
+			apiKey: "AIzaSyAgplxh789FO-NDxHmKA49ro71tjYBU-JE",
+			authDomain: "icstmgsdb.firebaseapp.com",
+			databaseURL: "https://icstmgsdb-default-rtdb.firebaseio.com",
+			projectId: "icstmgsdb",
+			storageBucket: "icstmgsdb.appspot.com",
+			messagingSenderId: "619240877167",
+			appId: "1:619240877167:web:9402346b3d9e6e1f57b19a"
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const database = getDatabase(app);
+
+		// Get logged-in username from localStorage
+		const username = localStorage.getItem('username');
+        if (!username) {
+            window.location.href = 'login.html';  // Redirect to login if not logged in
+        }
+
+		// Fetch subjects and populate table
+		const fetchSubjects = async () => {
+			const subjectsRef = ref(database, 'subjects');
+			const snapshot = await get(subjectsRef);
+			const subjectsBody = document.getElementById('subjectsBody');
+
+			// Clear existing rows
+			subjectsBody.innerHTML = '';
+
+			if (snapshot.exists()) {
+				const subjects = snapshot.val();
+				for (const [subjectKey, subjectData] of Object.entries(subjects)) {
+					for (const [code, details] of Object.entries(subjectData)) {
+						const row = document.createElement('tr');
+						row.innerHTML = `
+                        <td>${code}</td>
+                        <td>${details.description}</td>
+                        <td>${details.id}</td>
+                        <td>${details.course}</td>
+                        <td>${details.semester}</td>
+                        <td>${details.curriculum}</td>
+                        <td>${details.instructor}</td>
+                        <td>${details.yearLevel}</td>
+                        <td><button class="editBtn">Edit</button></td>
+                    `;
+						subjectsBody.appendChild(row);
+					}
+				}
+				 // Initialize DataTable after data is populated
+				 $('#subjectsTable').DataTable({
+                    "scrollX": true,
+						"paging": true,
+						"searching": true,
+						"scrollY": 400,
+                });
+			} else {
+				subjectsBody.innerHTML = '<tr><td colspan="8">No subjects found</td></tr>';
+			}
+		};
+
+		// Fetch icstSubjects and populate dropdowns
+		const fetchICSTSubjects = async (course) => {
+			const icstSubjectsRef = ref(database, 'icstSubjects/data');
+			const snapshot = await get(icstSubjectsRef);
+			const subjectCodeDropdown = document.getElementById('subjectCode');
+			const descriptionDropdown = document.getElementById('description');
+
+			subjectCodeDropdown.innerHTML = '<option value="">Select Subject Code</option>';
+			descriptionDropdown.innerHTML = '<option value="">Select Description</option>';
+
+			if (snapshot.exists()) {
+				const subjects = snapshot.val();
+				for (const subject of subjects) {
+					if (subject.Course === course) {
+						const option = document.createElement('option');
+						option.value = subject.Code;
+						option.textContent = subject.Code;
+						subjectCodeDropdown.appendChild(option);
+					}
+				}
+			}
+		};
+
+		// Handle subject code selection to populate description
+		const handleSubjectCodeSelection = async (code) => {
+			const icstSubjectsRef = ref(database, 'icstSubjects/data');
+			const snapshot = await get(icstSubjectsRef);
+			const descriptionDropdown = document.getElementById('description');
+
+			descriptionDropdown.innerHTML = '<option value="">Select Description</option>';
+
+			if (snapshot.exists()) {
+				const subjects = snapshot.val();
+				for (const subject of subjects) {
+					if (subject.Code === code) {
+						const option = document.createElement('option');
+						option.value = subject.Description;
+						option.textContent = subject.Description;
+						descriptionDropdown.appendChild(option);
+					}
+				}
+			}
+		};
+
+		// Show popup modal
+		const showModal = () => {
+			document.getElementById('addSubjectModal').classList.add('show');
+			document.getElementById('modalOverlay').classList.add('show');
+		};
+
+		// Hide popup modal
+		const hideModal = () => {
+			document.getElementById('addSubjectModal').classList.remove('show');
+			document.getElementById('modalOverlay').classList.remove('show');
+		};
+
+		// Save new subject to Firebase
+		const saveSubject = async () => {
+    const course = document.getElementById('course').value;
+    const subjectCode = document.getElementById('subjectCode').value;
+    const description = document.getElementById('description').value;
+    const id = document.getElementById('id').value;
+    const semester = document.getElementById('semester').value;
+    const curriculum = document.getElementById('curriculum').value;
+    const instructor = document.getElementById('instructor').value;
+    const yearLevel = document.getElementById('yearLevel').value;
+
+    // Get the current year and derive the academic year in "2023-2024" format
+    const currentYear = new Date().getFullYear();
+    const nextYear = currentYear + 1;
+    const academicYear = `${currentYear}-${nextYear}`;
+
+    // Validate that all fields are filled and curriculum is a 4-digit number
+    if (course && subjectCode && description && id && semester && curriculum.length === 4 && instructor && yearLevel) {
+        // Combine the current academic year and semester for node naming
+        const nodeName = `${semester}_${academicYear}`;
+
+        // Save the subject to the appropriate node using the dynamic name
+        const newSubjectRef = ref(database, `subjects/${nodeName}/${subjectCode}`);
+        await set(newSubjectRef, {
+            curriculum: curriculum,
+            course: course,
+            description: description,
+            id: id,
+            instructor: instructor,
+            semester: semester,
+            yearLevel: yearLevel
+        });
+
+        alert("Subject added successfully!");
+        hideModal();
+        fetchSubjects(); // Refresh the table
+    } else {
+        alert("Please fill all fields and ensure curriculum is a 4-digit number.");
+    }
+};
+
+
+
+		// Event listeners
+		document.getElementById('addSubjectBtn').addEventListener('click', showModal);
+		document.getElementById('closeModalBtn').addEventListener('click', hideModal);
+		document.getElementById('saveSubjectBtn').addEventListener('click', saveSubject);
+		document.getElementById('course').addEventListener('change', (e) => {
+			const selectedCourse = e.target.value;
+			if (selectedCourse) {
+				document.getElementById('subjectCode').disabled = false;
+				fetchICSTSubjects(selectedCourse);
+			} else {
+				document.getElementById('subjectCode').disabled = true;
+			}
+		});
+
+		document.getElementById('subjectCode').addEventListener('change', (e) => {
+			const selectedCode = e.target.value;
+			if (selectedCode) {
+				document.getElementById('description').disabled = false;
+				handleSubjectCodeSelection(selectedCode);
+			} else {
+				document.getElementById('description').disabled = true;
+			}
+		});
+
+
+		let currentEditingNode = ''; // To store the node path being edited
+
+// Show edit popup modal with existing data
+const showEditModal = (subjectData, subjectKey, nodeName) => {
+    const editCourse = document.getElementById('editCourse');
+    const editSubjectCode = document.getElementById('editSubjectCode');
+    const editDescription = document.getElementById('editDescription');
+    const editID = document.getElementById('editID');
+    const editSemester = document.getElementById('editSemester');
+    const editCurriculum = document.getElementById('editCurriculum');
+    const editInstructor = document.getElementById('editInstructor');
+    const editYearLevel = document.getElementById('editYearLevel');
+
+    if (editCourse && editSubjectCode && editDescription && editID && editSemester && editCurriculum && editInstructor && editYearLevel) {
+        editCourse.value = subjectData.course;
+        editSubjectCode.value = subjectKey;
+        editDescription.value = subjectData.description;
+        editID.value = subjectData.id;
+        editSemester.value = subjectData.semester;
+        editCurriculum.value = subjectData.curriculum;
+        editInstructor.value = subjectData.instructor;
+        editYearLevel.value = subjectData.yearLevel;
+    }
+
+    // Show modal
+    document.getElementById('editSubjectModal').classList.add('show');
+    document.getElementById('editModalOverlay').classList.add('show');
+};
+
+
+
+		// Hide edit popup modal
+		const hideEditModal = () => {
+			document.getElementById('editSubjectModal').classList.remove('show');
+			document.getElementById('editModalOverlay').classList.remove('show');
+		};
+
+		// Update subject in Firebase
+		const updateSubject = async () => {
+    const editCourse = document.getElementById('editCourse');
+    const editSubjectCode = document.getElementById('editSubjectCode');
+    const editDescription = document.getElementById('editDescription');
+    const editID = document.getElementById('editID');
+    const editSemester = document.getElementById('editSemester');
+    const editCurriculum = document.getElementById('editCurriculum');
+    const editInstructor = document.getElementById('editInstructor');
+    const editYearLevel = document.getElementById('editYearLevel');
+
+    if (editCourse && editSubjectCode && editDescription && editID && editSemester && editCurriculum && editInstructor && editYearLevel) {
+        const course = editCourse.value;
+        const subjectCode = editSubjectCode.value;
+        const description = editDescription.value;
+        const id = editID.value;
+        const semester = editSemester.value;
+        const curriculum = editCurriculum.value;
+        const instructor = editInstructor.value;
+        const yearLevel = editYearLevel.value;
+
+        if (course && subjectCode && description && id && semester && curriculum && instructor && yearLevel) {
+            // Get the current year and derive the academic year
+            const currentYear = new Date().getFullYear();
+            const nextYear = currentYear + 1;
+            const academicYear = `${currentYear}-${nextYear}`;
+
+            // Combine the semester and academic year for the node name
+            const nodeName = `${semester}_${academicYear}`;
+
+            // Reference the existing node
+            const subjectRef = ref(database, `subjects/${nodeName}/${subjectCode}`);
+
+            try {
+                await set(subjectRef, {
+                    curriculum: curriculum,
+                    course: course,
+                    description: description,
+                    id: id,
+                    instructor: instructor,
+                    semester: semester,
+                    yearLevel: yearLevel
+                });
+
+                alert("Subject updated successfully!");
+                hideEditModal();
+                fetchSubjects(); // Refresh the table
+            } catch (error) {
+                console.error("Error updating subject:", error);
+                alert("An error occurred while updating the subject. Please try again.");
+            }
+        } else {
+            alert("Please fill all fields.");
+        }
+    } else {
+        console.error("One or more elements not found in the DOM.");
+    }
+};
+
+		// Event listener for edit button
+		document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('editBtn')) {
+        const row = e.target.closest('tr');
+        const subjectCode = row.children[0].textContent;
+        const semester = row.children[4].textContent;
+        const curriculum = row.children[5].textContent;
+
+        const subjectData = {
+            description: row.children[1].textContent,
+            id: row.children[2].textContent,
+            course: row.children[3].textContent,
+            semester: semester,
+            curriculum: curriculum,
+            instructor: row.children[6].textContent,
+            yearLevel: row.children[7].textContent
+        };
+        
+        const nodeName = `${semester}_${curriculum}`;
+
+        showEditModal(subjectData, subjectCode, nodeName);
+    }
+});
+
+
+		// Event listener for closing the edit modal
+document.getElementById('closeEditModalBtn').addEventListener('click', hideEditModal);
+document.getElementById('updateSubjectBtn').addEventListener('click', updateSubject);
+
+		// Load initial data
+		fetchSubjects();
+
+		// Search function
+		const searchSubjects = () => {
+			const searchInput = document.getElementById('searchInput').value.toLowerCase();
+			const rows = document.querySelectorAll('#subjectsBody tr');
+
+			rows.forEach(row => {
+				const cells = row.querySelectorAll('td');
+				const found = Array.from(cells).some(cell =>
+					cell.textContent.toLowerCase().includes(searchInput)
+				);
+				row.style.display = found ? '' : 'none'; // Show or hide row based on search
+			});
+		};
+
+		// Event listener for search input
+		document.getElementById('searchInput').addEventListener('input', searchSubjects);
+
+		function logout() {
+			localStorage.removeItem('isLoggedIn');
+			localStorage.removeItem('username');
+			window.location.href = 'login.html';
+		}
+	</script>
+	<script>
+		// JavaScript function to enforce only digits and a maximum length of 4 characters
+		function validateCurriculum(input) {
+			// Only allow numbers (0-9) and limit the length to 4 digits
+			input.value = input.value.replace(/[^0-9]/g, '').slice(0, 4);
+		}
+	</script>	
+	<script type="module" src="assets/js/upload.js"></script>
+	<script src="assets/js/script.js"></script>
+</body>
+
+</html>

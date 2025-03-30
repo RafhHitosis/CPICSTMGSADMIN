@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="assets/img/logo_.png">
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<title>Semestral Grade</title>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
+	<style>
+		body {
+			font-family: 'Open Sans', sans-serif;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			padding: 10px;
+			text-align: left;
+		}
+
+		/* File Upload Dialog */
+		.file-upload-dialog {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 400px;
+			background-color: #fff;
+			border: 1px solid #ddd;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+			z-index: 1000;
+			display: none;
+			border-radius: 10px;
+		}
+
+		.file-upload-dialog.show {
+			display: block;
+		}
+
+		.file-upload-dialog.hide {
+			display: none;
+		}
+
+		.file-upload-content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.file-upload-content h2 {
+			margin-bottom: 20px;
+			font-size: 20px;
+		}
+
+		.file-upload-content input[type="file"] {
+			margin-bottom: 20px;
+		}
+
+		#uploadStatus {
+			margin-top: 10px;
+			color: green;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand"><img src="assets/img/logo_.png" style="height: 40px; width: 30px; margin-left: 10px;">
+			&nbsp;&nbsp;&nbsp;Admin</a>
+		<ul class="side-menu">
+			<li><a href="Dashboard.html"><i class='bx bxs-dashboard icon'></i> Dashboard</a></li>
+			<li class="divider" data-text="main">Main</li>
+			<li><a href="setDuration.html"><i class='bx bxs-time icon'></i> Set Duration</a></li>
+			<li><a href="subjects.html"><i class='bx bxs-book icon'></i> Subjects</a></li>
+			<li><a href="grades.html"><i class='bx bxs-pen icon'></i> Grades</a></li>
+			<li>
+				<a href="#"><i class='bx bxs-user-detail icon'></i> User Accounts <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="instructors.html"><i class='bx bxs-briefcase'></i>&nbsp;&nbsp;&nbsp;Instructor</a></li>
+					<li><a href="students.html"><i class='bx bxs-bus'></i>&nbsp;&nbsp;&nbsp;Students</a></li>
+				</ul>
+			</li>
+			<li class="divider" data-text="Reports">Reports</li>
+			<li>
+				<a href="#" class="active"><i class='bx bxs-notepad icon'></i> Grades Summary <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="dropOuts.html"><i class='bx bxs-detail'></i>&nbsp;&nbsp;&nbsp;Drop-outs</a></li>
+					<li><a href="studentCompletionForm.html"><i class='bx bxs-receipt'></i>&nbsp;&nbsp;&nbsp;Completion Form</a></li>
+					<li><a href="studentDeficiency.html"><i class='bx bxs-report'></i>&nbsp;&nbsp;&nbsp;Student Deficiency</a></li>
+					<li><a href="RTSemestralGrade.html"><i class='bx bxs-pencil'></i>&nbsp;&nbsp;&nbsp;Semestral
+							Grades</a></li>
+					<!-- <li><a href="#">Checkbox</a></li>
+					<li><a href="#">Radio</a></li> -->
+				</ul>
+			</li>
+			<li><a href="#" id="uploadFilesButton"><i class='bx bxs-file icon'></i> Upload Files</a></li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+
+	<!-- NAVBAR -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu toggle-sidebar'></i>
+			<form action="#">
+				<div class="form-group">
+					<!-- <input type="text" placeholder="Search...">
+					<i class='bx bx-search icon'></i> -->
+				</div>
+			</form>
+			<a href="#" class="nav-link notification-bell">
+				<i class='bx bxs-bell icon'></i>
+				<span class="badge"></span>
+			</a>
+			<div class="dropdown-menu notifications-dropdown hide">
+				<h4>Instructor Requests</h4>
+				<ul id="requestList">
+					<!-- Instructor request categories will be populated here -->
+				</ul>
+			</div>
+			<!-- <a href="#" class="nav-link">
+				<i class='bx bxs-message-square-dots icon'></i>
+				<span class="badge">8</span>
+			</a> -->
+			<span class="divider"></span>
+			<div class="profile">
+				<img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cGVvcGxlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+					alt="">
+				<ul class="profile-link">
+					<li><a href="changePassword.html"><i class='bx bxs-cog'></i> Change Password</a></li>
+					<li><a href="#" onclick="logout()"><i class='bx bxs-log-out-circle'></i> Logout</a></li>
+				</ul>
+			</div>
+		</nav>
+		<!-- NAVBAR -->
+
+		<!-- MAIN -->
+		<main>
+			<h1 class="title">Semestral Grade</h1>
+			<ul class="breadcrumbs">
+				<li><a href="#">Grades Summary</a></li>
+				<li class="divider">/</li>
+				<li><a href="#" class="active">Semestral Grade</a></li>
+			</ul>
+
+			<br>
+
+			<label for="semesterSelect">Select Semester:</label>
+			<select id="semesterSelect" style="margin-bottom: 14px; margin-right: 20px;">
+				<option value="">--Select Semester--</option>
+				<option value="First Semester">First Semester</option>
+				<option value="Second Semester">Second Semester</option>
+				<option value="summer">Summer</option>
+				<option value="midyear">Mid Year Term</option>
+				<!-- Add more semesters as needed -->
+			</select>
+
+			<label for="yearSelect">Select Academic Year:</label>
+			<select id="yearSelect" style="margin-bottom: 14px;">
+				<option value="">--Select Academic Year--</option>
+				<option value="2024-2025">2024-2025</option>
+				<option value="2023-2024">2023-2024</option>
+				<!-- Add more academic years as needed -->
+			</select>
+
+
+			<label for="subjectSelect">Select Subject:</label>
+			<select id="subjectSelect" disabled>
+				<option value="">--Select Subject--</option>
+			</select>
+
+			<div class="content-data">
+				<table id="gradeTable" style="width:100%" class="display nowrap">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Midterm Total</th>
+							<th>Midterm 50%</th>
+							<th>Final Total</th>
+							<th>Final 50%</th>
+							<th>Final Grade</th>
+							<th>Equivalent</th>
+							<th>Credit</th>
+							<th>Remarks</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+
+
+			<!-- File Upload Dialog -->
+			<div id="fileUploadDialog" class="file-upload-dialog hide">
+				<div class="file-upload-content">
+					<h2>Upload File</h2>
+					<form id="fileUploadForm">
+						<input type="file" id="fileInput" />
+						<button type="button" id="uploadButton">Upload</button>
+						<button type="button" id="closeDialogButton">Close</button>
+					</form>
+					<div id="uploadStatus"></div> <!-- For displaying upload status -->
+				</div>
+			</div>
+
+		</main>
+		<!-- MAIN -->
+	</section>
+	<!-- NAVBAR -->
+
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+	<!-- DataTables JS -->
+	<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+	<script type="module">
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+		import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+		// Firebase configuration
+		const firebaseConfig = {
+			apiKey: "AIzaSyAgplxh789FO-NDxHmKA49ro71tjYBU-JE",
+			authDomain: "icstmgsdb.firebaseapp.com",
+			databaseURL: "https://icstmgsdb-default-rtdb.firebaseio.com",
+			projectId: "icstmgsdb",
+			storageBucket: "icstmgsdb.appspot.com",
+			messagingSenderId: "619240877167",
+			appId: "1:619240877167:web:9402346b3d9e6e1f57b19a"
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const database = getDatabase(app);
+
+		$(document).ready(function () {
+			const semesterSelect = $('#semesterSelect');
+			const yearSelect = $('#yearSelect');
+			const subjectSelect = $('#subjectSelect');
+
+			// Initialize DataTable
+			const gradeTable = $('#gradeTable').DataTable({
+				"scrollX": true,
+				"scrollY": 300,
+				dom: 'Bfrtip',
+				buttons: [
+					{
+						extend: 'excelHtml5',
+						text: 'Export to Excel',
+						title: 'Semestral Grade Data'
+					},
+					{
+						extend: 'pdfHtml5',
+						text: 'Export to PDF',
+						title: 'Semestral Grade Data'
+					},
+					{
+						extend: 'print',
+						text: 'Print',
+						title: 'Semestral Grade Data'
+					}
+				]
+			});
+
+			// Load Subjects when a Semester and Academic Year are Selected
+			$('#semesterSelect, #yearSelect').change(function () {
+				const selectedSemester = semesterSelect.val();
+				const selectedYear = yearSelect.val();
+
+				if (selectedSemester && selectedYear) {
+					// Enable subject dropdown
+					subjectSelect.prop('disabled', false).empty().append('<option value="">--Select Subject--</option>');
+
+					// Combine the semester and year to create the path
+					const subjectNode = `${selectedSemester}_${selectedYear}`;
+
+					// Fetch subjects from the combined path
+					onValue(ref(database, `subjects/${subjectNode}`), (snapshot) => {
+						if (snapshot.exists()) {
+							const subjects = snapshot.val();
+							Object.keys(subjects).forEach((subjectId) => {
+								subjectSelect.append(`<option value="${subjects[subjectId].id}">${subjects[subjectId].id} - ${subjects[subjectId].description}</option>`);
+							});
+						}
+					}, (error) => {
+						console.error("Error fetching subjects: ", error);
+					});
+				} else {
+					// Disable subject dropdown if both semester and year aren't selected
+					subjectSelect.prop('disabled', true);
+				}
+			});
+
+			// Load Grades in Real-Time when a Subject is Selected
+			subjectSelect.change(function () {
+				const selectedSubjectId = $(this).val();
+				const selectedSemester = semesterSelect.val();
+				const selectedYear = yearSelect.val();
+
+				if (selectedSubjectId && selectedSemester && selectedYear) {
+					const subjectNode = `${selectedSemester}_${selectedYear}`;
+					const gradesRef = ref(database, `grades/grade2425_1stsem/data`);
+					const studentInfoRef = ref(database, 'studentInfo/data');
+
+					// Fetch student info first
+					onValue(studentInfoRef, (studentInfoSnapshot) => {
+						const studentInfo = studentInfoSnapshot.val();
+
+						// Then fetch grades
+						onValue(gradesRef, (gradeSnapshot) => {
+							gradeTable.clear();
+							if (gradeSnapshot.exists()) {
+								const grades = gradeSnapshot.val();
+
+								Object.values(grades).forEach(grade => {
+									if (grade.id === selectedSubjectId) {
+										// Find matching student info
+										const student = studentInfo.find(s => s.StudNum === grade.studnum);
+										const studentName = student ? `${student.Fname} ${student.Mname} ${student.Lname}` : 'N/A';
+
+										gradeTable.row.add([
+											studentName,
+											grade.mtotal || 'N/A',
+											grade.midterm || 'N/A',
+											grade.ftotal || 'N/A',
+											grade.final || 'N/A',
+											grade.finalgrade || 'N/A',
+											grade.equivalent || 'N/A',
+											grade.credit || 'N/A',
+											grade.remarks || 'N/A'
+										]).draw(false);
+									}
+								});
+								gradeTable.draw();
+							}
+						}, (error) => {
+							console.error("Error fetching grades data: ", error);
+						});
+					}, (error) => {
+						console.error("Error fetching student info: ", error);
+					});
+				} else {
+					gradeTable.clear().draw();
+				}
+			});
+		});
+
+	</script>
+	<script>
+		// Get logged-in username from localStorage
+		const username = localStorage.getItem('username');
+		if (!username) {
+			window.location.href = 'login.html';  // Redirect to login if not logged in
+		}
+		function logout() {
+			localStorage.removeItem('isLoggedIn');
+			localStorage.removeItem('username');
+			window.location.href = 'login.html';
+		}
+	</script>
+	<!-- Upload File Function -->
+	<script>
+		// Function to upload a file to the backend server
+		// Function to upload a file to the backend server
+		function uploadFile() {
+			const fileInput = document.getElementById('fileUpload');
+			const file = fileInput.files[0];
+
+			if (!file) {
+				alert('Please select a file to upload.');
+				return;
+			}
+
+			const formData = new FormData();
+			formData.append('file', file);
+
+			fetch('http://localhost:3000/upload', { // Correct URL for the upload endpoint
+				method: 'POST',
+				body: formData,
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok.');
+					}
+					return response.text();
+				})
+				.then(data => {
+					alert(data); // Display the message from the server
+				})
+				.catch(error => {
+					console.error('Error uploading file:', error);
+					alert('Error uploading file.');
+				});
+		}
+
+	</script>
+	<script type="module" src="assets/js/upload.js"></script>
+	<script src="assets/js/script.js"></script>
+</body>
+
+</html>

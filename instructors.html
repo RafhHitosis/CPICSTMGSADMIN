@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="assets/img/logo_.png">
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="font-family" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
+	<title>Instructor</title>
+	<style>
+		table {
+			font-family: arial, sans-serif;
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		td,
+		th {
+			text-align: left;
+			padding: 8px;
+		}
+
+		#instructor-table tbody tr:nth-child(even) {
+			background-color: gainsboro;
+			/* Adjust color as needed */
+		}
+
+		button:not(#add-instructor-btn) {
+			background-color: #4CAF50;
+			color: white;
+			padding: 9px;
+			border-radius: 5px;
+			border: none;
+			cursor: grab;
+			text-align: center;
+			margin: auto;
+			display: flex;
+		}
+
+		#add-instructor-btn {
+			margin-bottom: 12px;
+			margin-top: 20px;
+			background-color: #4CAF50;
+			color: white;
+			padding: 9px;
+			border-radius: 5px;
+			border: none;
+			cursor: grab;
+		}
+
+		#instructor-form {
+			display: none;
+			margin: 20px 0;
+		}
+
+		.form-groupModal {
+			margin-bottom: 10px;
+		}
+		/* File Upload Dialog */
+.file-upload-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 1000;
+    display: none;
+    border-radius: 10px;
+}
+
+.file-upload-dialog.show {
+    display: block;
+}
+
+.file-upload-dialog.hide {
+    display: none;
+}
+
+.file-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-upload-content h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.file-upload-content input[type="file"] {
+    margin-bottom: 20px;
+}
+
+#uploadStatus {
+    margin-top: 10px;
+    color: green;
+}
+	</style>
+</head>
+
+<body>
+
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand"><img src="assets/img/logo_.png" style="height: 40px; width: 30px; margin-left: 10px;">
+			&nbsp;&nbsp;&nbsp;Admin</a>
+		<ul class="side-menu">
+			<li><a href="Dashboard.html"><i class='bx bxs-dashboard icon'></i> Dashboard</a></li>
+			<li class="divider" data-text="main">Main</li>
+			<li><a href="setDuration.html"><i class='bx bxs-time icon'></i> Set Duration</a></li>
+			<li><a href="subjects.html"><i class='bx bxs-book icon'></i> Subjects</a></li>
+			<li><a href="grades.html"><i class='bx bxs-pen icon'></i> Grades</a></li>
+			<li>
+				<a href="#" class="active"><i class='bx bxs-user-detail icon'></i> User Accounts <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="instructors.html"><i class='bx bxs-briefcase icon'></i>Instructor</a></li>
+					<li><a href="students.html"><i class='bx bxs-bus icon'></i>Students</a></li>
+				</ul>
+			</li>
+			<li class="divider" data-text="Reports">Reports</li>
+			<li>
+				<a href="#"><i class='bx bxs-notepad icon'></i> Grades Summary <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="dropOuts.html"><i class='bx bxs-detail'></i>&nbsp;&nbsp;&nbsp;Drop-outs</a></li>
+					<li><a href="studentCompletionForm.html"><i class='bx bxs-receipt'></i>&nbsp;&nbsp;&nbsp;Completion Form</a></li>
+					<li><a href="studentDeficiency.html"><i class='bx bxs-report'></i>&nbsp;&nbsp;&nbsp;Student Deficiency</a></li>
+							<li><a href="RTSemestralGrade.html"><i class='bx bxs-pencil'></i>&nbsp;&nbsp;&nbsp;Semestral Grades</a></li>
+					<!-- <li><a href="#">Checkbox</a></li>
+					<li><a href="#">Radio</a></li> -->
+				</ul>
+			</li>
+			<li><a href="#" id="uploadFilesButton"><i class='bx bxs-file icon'></i> Upload Files</a></li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+
+	<!-- NAVBAR -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu toggle-sidebar'></i>
+			<form action="#">
+				<div class="form-group">
+					<input type="text" id="search-input" placeholder="Search instructors...">
+					<i class='bx bx-search icon'></i>
+				</div>
+			</form>
+			<a href="#" class="nav-link notification-bell">
+				<i class='bx bxs-bell icon'></i>
+				<span class="badge"></span>
+			</a>
+			<div class="dropdown-menu notifications-dropdown hide">
+				<h4>Instructor Requests</h4>
+				<ul id="requestList">
+					<!-- Instructor request categories will be populated here -->
+				</ul>
+			</div>	
+			<!-- <a href="#" class="nav-link">
+				<i class='bx bxs-message-square-dots icon'></i>
+				<span class="badge">8</span>
+			</a> -->
+			<span class="divider"></span>
+			<div class="profile">
+				<img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cGVvcGxlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+					alt="">
+				<ul class="profile-link">
+					<li><a href="changePassword.html"><i class='bx bxs-cog'></i> Change Password</a></li>
+					<li><a href="#" onclick="logout()"><i class='bx bxs-log-out-circle'></i> Logout</a></li>
+				</ul>
+			</div>
+		</nav>
+		<!-- NAVBAR -->
+
+		<!-- MAIN -->
+		<main>
+			<h1 class="title">Instructor</h1>
+			<ul class="breadcrumbs">
+				<li><a href="#">User Accounts</a></li>
+				<li class="divider">/</li>
+				<li><a href="#" class="active">Instructor</a></li>
+			</ul>
+
+				<div class="content-data">
+					<button id="add-instructor-btn">Add Instructor</button>
+					<!-- Table to display instructor data -->
+					<table id="instructor-table" style="width:100%" class="display nowrap">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Username</th>
+								<th>Password</th>
+								<th>Lock Status</th>
+								<th>Semester</th>
+								<th>Year</th>
+								<th>locGrades</th>
+								<th>locSubjects</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- Data will be inserted here dynamically -->
+						</tbody>
+					</table>
+				</div>
+
+			<!-- Add Instructor Form -->
+			<div id="instructor-form">
+				<h2>Add Instructor</h2>
+				<form id="form">
+					<div class="form-groupModal">
+						<label for="instructor-name">Instructor Name:</label>
+						<input type="text" id="instructor-name" required>
+					</div>
+					<div class="form-groupModal">
+						<label for="username">Username:</label>
+						<input type="text" id="username" required>
+					</div>
+					<div class="form-groupModal">
+						<label for="password">Password:</label>
+						<input type="password" id="password" required>
+					</div>
+					<div class="form-groupModal">
+						<label for="lock">Lock:</label>
+						<select id="lock" required>
+							<option value="1">Locked (1)</option>
+							<option value="0">Unlocked (0)</option>
+						</select>
+					</div>
+					<div class="form-groupModal">
+						<label for="semester">Semester:</label>
+						<select id="semester" required>
+							<option value="">Select Semester</option>
+							<option value="First Semester">First Semester</option>
+							<option value="Second Semester">Second Semester</option>
+							<option value="Summer">Summer</option>
+							<option value="Midyear term">Midyear term</option>
+						</select>
+					</div>
+					<div class="form-groupModal">
+						<label for="year">Year:</label>
+						<input type="text" id="year" required placeholder="e.g., 2024-2025">
+					</div>
+					<div class="form-groupModal">
+						<label for="locGrades">Grades Location:</label>
+						<select id="locGrades" required>
+							<option value="">Select Grades Location</option>
+						</select>
+					</div>
+					<div class="form-groupModal">
+						<label for="locSubjects">Subjects Location:</label>
+						<select id="locSubjects" required>
+							<option value="">Select Subjects Location</option>
+						</select>
+					</div>
+					<button type="submit">Add Instructor</button>
+				</form>
+			</div>
+
+			<!-- Add Edit Form -->
+			<div id="edit-form" style="display: none;">
+				<h2>Edit Instructor</h2>
+				<form id="edit-form-content">
+					<div class="form-groupModal">
+						<label for="edit-instructor-name">Instructor Name:</label>
+						<input type="text" id="edit-instructor-name" disabled>
+					</div>
+					<div class="form-groupModal">
+						<label for="edit-username">Username:</label>
+						<input type="text" id="edit-username" disabled>
+					</div>
+					<div class="form-groupModal">
+						<label for="edit-password">Password:</label>
+						<input type="password" id="edit-password" disabled>
+					</div>
+					<div class="form-groupModal">
+						<label for="edit-lock">Lock:</label>
+						<select id="edit-lock" disabled>
+							<option value="1">Locked (1)</option>
+							<option value="0">Unlocked (0)</option>
+						</select>
+					</div>
+					<div class="form-groupModal">
+						<label for="edit-semester">Semester:</label>
+						<select id="edit-semester" disabled>
+							<option value="">Select Semester</option>
+							<option value="First Semester">First Semester</option>
+							<option value="Second Semester">Second Semester</option>
+							<option value="Summer">Summer</option>
+							<option value="Midyear term">Midyear term</option>
+						</select>
+					</div>
+					<div class="form-groupModal">
+						<label for="edit-year">Year:</label>
+						<input type="text" id="edit-year" disabled>
+					</div>
+					<div class="form-groupModal">
+						<label for="edit-locGrades">Grades Location:</label>
+						<select id="edit-locGrades" required>
+							<option value="">Select Grades Location</option>
+						</select>
+					</div>
+					<div class="form-groupModal">
+						<label for="edit-locSubjects">Subjects Location:</label>
+						<select id="edit-locSubjects" required>
+							<option value="">Select Subjects Location</option>
+						</select>
+					</div>
+					<button type="submit">Update Instructor</button>
+				</form>
+			</div>
+
+										<!-- File Upload Dialog -->
+<div id="fileUploadDialog" class="file-upload-dialog hide">
+    <div class="file-upload-content">
+        <h2>Upload File</h2>
+        <form id="fileUploadForm">
+            <input type="file" id="fileInput" />
+            <button type="button" id="uploadButton">Upload</button>
+            <button type="button" id="closeDialogButton">Close</button>
+        </form>
+        <div id="uploadStatus"></div> <!-- For displaying upload status -->
+    </div>
+</div>
+
+		</main>
+		<!-- MAIN -->
+	</section>
+	<!-- NAVBAR -->
+
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+	<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+	<script type="module">
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+		import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+		// Initialize Firebase
+		const firebaseConfig = {
+			apiKey: "AIzaSyAgplxh789FO-NDxHmKA49ro71tjYBU-JE",
+			authDomain: "icstmgsdb.firebaseapp.com",
+			databaseURL: "https://icstmgsdb-default-rtdb.firebaseio.com",
+			projectId: "icstmgsdb",
+			storageBucket: "icstmgsdb.appspot.com",
+			messagingSenderId: "619240877167",
+			appId: "1:619240877167:web:9402346b3d9e6e1f57b19a"
+		};
+		const app = initializeApp(firebaseConfig);
+		const db = getDatabase(app);
+
+		// Get logged-in username from localStorage
+		const username = localStorage.getItem('username');
+		if (!username) {
+			window.location.href = 'login.html';  // Redirect to login if not logged in
+		}
+
+		const instructorTable = document.getElementById('instructor-table').getElementsByTagName('tbody')[0];
+		const addInstructorBtn = document.getElementById('add-instructor-btn');
+		const instructorForm = document.getElementById('instructor-form');
+		const form = document.getElementById('form');
+
+		const semesterSelect = document.getElementById('semester');
+		const yearInput = document.getElementById('year');
+		const locGradesSelect = document.getElementById('locGrades');
+		const locSubjectsSelect = document.getElementById('locSubjects');
+
+		let currentEditingInstructor = null;
+
+		// Function to check if an instructor exists and populate the username and password fields
+		async function populateInstructorData(name) {
+			const instructorRef = ref(db, `normalLogin/instructor/${name}`);
+			const snapshot = await get(instructorRef);
+
+			if (snapshot.exists()) {
+				const instructorData = snapshot.val();
+				document.getElementById('username').value = instructorData.username;
+				document.getElementById('password').value = instructorData.password;
+			} else {
+				document.getElementById('username').value = '';
+				document.getElementById('password').value = '';
+			}
+		}
+
+		// Event listener for instructor name input to populate username and password
+		document.getElementById('instructor-name').addEventListener('input', function () {
+			const name = this.value;
+			if (name) {
+				populateInstructorData(name);
+			}
+		});
+
+		async function populateDropdowns() {
+			const gradesRef = ref(db, 'grades');
+			const subjectsRef = ref(db, 'subjects');
+
+			try {
+				const [gradesSnapshot, subjectsSnapshot] = await Promise.all([
+					get(gradesRef),
+					get(subjectsRef)
+				]);
+
+				if (gradesSnapshot.exists()) {
+					const gradesData = gradesSnapshot.val();
+					Object.keys(gradesData).forEach(key => {
+						const option = document.createElement('option');
+						option.value = key;
+						option.textContent = key;
+						locGradesSelect.appendChild(option.cloneNode(true));
+						document.getElementById('edit-locGrades').appendChild(option);
+					});
+				}
+
+				if (subjectsSnapshot.exists()) {
+					const subjectsData = subjectsSnapshot.val();
+					Object.keys(subjectsData).forEach(key => {
+						const option = document.createElement('option');
+						option.value = key;
+						option.textContent = key;
+						locSubjectsSelect.appendChild(option.cloneNode(true));
+						document.getElementById('edit-locSubjects').appendChild(option);
+					});
+				}
+			} catch (error) {
+				console.error('Error fetching data:', error);
+			}
+		}
+
+		populateDropdowns();
+
+		semesterSelect.addEventListener('change', updateDropdowns);
+		yearInput.addEventListener('input', updateDropdowns);
+
+		function updateDropdowns() {
+			const semester = semesterSelect.value;
+			const year = yearInput.value;
+
+			if (semester && year) {
+				const yearCode = year.replace('-', '');
+				const semesterCode = semester.toLowerCase().replace(' ', '');
+				const locPrefix = `${yearCode}_${semesterCode}`;
+
+				let hasVisibleOption = false;
+
+				[locGradesSelect, locSubjectsSelect].forEach(select => {
+					Array.from(select.options).forEach(option => {
+						if (option.value.includes(locPrefix)) {
+							option.style.display = '';
+							hasVisibleOption = true;
+						} else {
+							option.style.display = 'none';
+						}
+					});
+
+					// If no options match, show all options
+					if (!hasVisibleOption) {
+						Array.from(select.options).forEach(option => {
+							option.style.display = '';
+						});
+					}
+				});
+			}
+		}
+
+		// Display Instructors
+		async function displayInstructors() {
+			const dbRef = ref(db, 'normalLogin/instructor');
+			try {
+				const snapshot = await get(dbRef);
+				if (snapshot.exists()) {
+					const data = snapshot.val();
+					instructorTable.innerHTML = '';
+					for (const [name, instructor] of Object.entries(data)) {
+						for (const [semester, semesterData] of Object.entries(instructor.assigned || {})) {
+							for (const [year, yearData] of Object.entries(semesterData)) {
+								const row = instructorTable.insertRow();
+								row.insertCell(0).textContent = instructor.name;
+								row.insertCell(1).textContent = instructor.username;
+								row.insertCell(2).textContent = instructor.password;
+								row.insertCell(3).textContent = instructor.lock === 1 ? "Locked" : "Unlocked";
+								row.insertCell(4).textContent = semester;
+								row.insertCell(5).textContent = year;
+								row.insertCell(6).textContent = yearData.locGrades;
+								row.insertCell(7).textContent = yearData.locSubjects;
+
+								const editCell = row.insertCell(8);
+								const editButton = document.createElement('button');
+								editButton.textContent = 'Edit';
+								editButton.onclick = () => handleEditButtonClick(name, semester, year);
+								editCell.appendChild(editButton);
+							}
+						}
+					}
+					// Initialize DataTable after data is populated
+					$('#instructor-table').DataTable({
+						"scrollX": true,
+						"paging": true,
+						"searching": true,
+						"scrollY": 300
+					});
+				} else {
+					console.log('No instructor data available');
+				}
+			} catch (error) {
+				console.error('Error fetching instructor data:', error);
+			}
+		}
+
+		// Function to populate locGrades and locSubjects dropdowns
+
+		// Handle form submission
+		form.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			const name = document.getElementById('instructor-name').value;
+			const username = document.getElementById('username').value;
+			const password = document.getElementById('password').value;
+			const lock = parseInt(document.getElementById('lock').value, 10);
+			const semester = semesterSelect.value;
+			const year = yearInput.value;
+			const locGrades = locGradesSelect.value;
+			const locSubjects = locSubjectsSelect.value;
+
+			const instructorRef = ref(db, `normalLogin/instructor/${name}`);
+
+			try {
+				const snapshot = await get(instructorRef);
+				if (snapshot.exists()) {
+					// Instructor already exists, so add new semester/year/locGrades/locSubjects
+					const updates = {
+						[`assigned/${semester}/${year}`]: {
+							locGrades,
+							locSubjects
+						}
+					};
+					await update(instructorRef, updates);
+					alert('New data added for existing instructor.');
+				} else {
+					// New instructor, create the instructor record
+					const newInstructor = {
+						name,
+						username,
+						password,
+						lock,
+						assigned: {
+							[semester]: {
+								[year]: {
+									locGrades,
+									locSubjects
+								}
+							}
+						}
+					};
+					await set(instructorRef, newInstructor);
+					alert('Instructor added successfully.');
+				}
+				form.reset();
+				document.getElementById('instructor-form').style.display = 'none';
+				displayInstructors(); // Refresh the instructor list
+			} catch (error) {
+				console.error('Error adding instructor:', error);
+				alert('Failed to add instructor. Please try again.');
+			}
+		});
+
+		// Edit Instructor
+		async function handleEditButtonClick(name, semester, year) {
+			currentEditingInstructor = { name, semester, year };
+
+			const editForm = document.getElementById('edit-form');
+			const editInstructorName = document.getElementById('edit-instructor-name');
+			const editUsername = document.getElementById('edit-username');
+			const editPassword = document.getElementById('edit-password');
+			const editLock = document.getElementById('edit-lock');
+			const editSemester = document.getElementById('edit-semester');
+			const editYear = document.getElementById('edit-year');
+			const editLocGrades = document.getElementById('edit-locGrades');
+			const editLocSubjects = document.getElementById('edit-locSubjects');
+
+			const instructorRef = ref(db, `normalLogin/instructor/${name}`);
+			const snapshot = await get(instructorRef);
+			if (snapshot.exists()) {
+				const instructorData = snapshot.val();
+				editInstructorName.value = instructorData.name;
+				editUsername.value = instructorData.username;
+				editPassword.value = instructorData.password;
+				editLock.value = instructorData.lock;
+				editSemester.value = semester;
+				editYear.value = year;
+				editLocGrades.value = instructorData.assigned[semester][year].locGrades;
+				editLocSubjects.value = instructorData.assigned[semester][year].locSubjects;
+
+				editForm.style.display = 'block';
+			}
+		}
+
+		document.getElementById('edit-form-content').addEventListener('submit', async (event) => {
+			event.preventDefault();
+			const { name } = currentEditingInstructor;
+			const newSemester = document.getElementById('edit-semester').value;
+			const newYear = document.getElementById('edit-year').value;
+			const newLocGrades = document.getElementById('edit-locGrades').value;
+			const newLocSubjects = document.getElementById('edit-locSubjects').value;
+
+			const instructorRef = ref(db, `normalLogin/instructor/${name}/assigned/${newSemester}/${newYear}`);
+
+			try {
+				// Update only the locGrades and locSubjects for the selected semester and year
+				const updates = {
+					locGrades: newLocGrades,
+					locSubjects: newLocSubjects
+				};
+
+				await update(instructorRef, updates);
+				alert('Instructor updated successfully.');
+				document.getElementById('edit-form-content').reset();
+				document.getElementById('edit-form').style.display = 'none';
+				displayInstructors();
+				currentEditingInstructor = null;
+			} catch (error) {
+				console.error('Error updating instructor:', error);
+			}
+		});
+
+		addInstructorBtn.addEventListener('click', () => {
+			instructorForm.style.display = instructorForm.style.display === 'none' ? 'block' : 'none';
+		});
+
+		// Initial display of instructors
+		displayInstructors();
+
+		// Add this at the beginning of your script or inside a suitable section
+
+		const searchInput = document.getElementById('search-input');
+
+		// Search function
+		searchInput.addEventListener('input', () => {
+			const searchTerm = searchInput.value.toLowerCase();
+			const rows = instructorTable.getElementsByTagName('tr');
+
+			for (let i = 0; i < rows.length; i++) {
+				const cells = rows[i].getElementsByTagName('td');
+				let rowVisible = false;
+
+				for (let j = 0; j < cells.length; j++) {
+					if (cells[j].textContent.toLowerCase().includes(searchTerm)) {
+						rowVisible = true;
+						break;
+					}
+				}
+
+				if (rowVisible) {
+					rows[i].style.display = '';
+				} else {
+					rows[i].style.display = 'none';
+				}
+			}
+		});
+
+		function logout() {
+			localStorage.removeItem('isLoggedIn');
+			localStorage.removeItem('username');
+			window.location.href = 'login.html';
+		}
+	</script>
+	<script type="module" src="assets/js/upload.js"></script>
+	<script src="assets/js/script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="assets/img/logo_.png">
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="font-family" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<title>Dashboard</title>
+	<style>
+		/* File Upload Dialog */
+		.file-upload-dialog {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 400px;
+			background-color: lightgreen;
+			border: 1px solid #ddd;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+			z-index: 1000;
+			display: none;
+			border-radius: 10px;
+		}
+
+		.file-upload-dialog.show {
+			display: block;
+		}
+
+		.file-upload-dialog.hide {
+			display: none;
+		}
+
+		.file-upload-content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.file-upload-content h2 {
+			margin-bottom: 20px;
+			font-size: 20px;
+		}
+
+		.file-upload-content input[type="file"] {
+			margin-bottom: 20px;
+		}
+
+		#uploadStatus {
+			margin-top: 10px;
+			color: green;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand"><img src="assets/img/logo_.png" style="height: 40px; width: 30px; margin-left: 10px;">
+			&nbsp;&nbsp;&nbsp;Admin</a>
+		<ul class="side-menu">
+			<li><a href="Dashboard.html" class="active"><i class='bx bxs-dashboard icon'></i> Dashboard</a></li>
+			<li class="divider" data-text="main">Main</li>
+			<li><a href="setDuration.html"><i class='bx bxs-time icon'></i> Set Duration</a></li>
+			<li><a href="subjects.html"><i class='bx bxs-book icon'></i> Subjects</a></li>
+			<li><a href="grades.html"><i class='bx bxs-pen icon'></i> Grades</a></li>
+			<li>
+				<a href="#"><i class='bx bxs-user-detail icon'></i> User Accounts <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="instructors.html"><i class='bx bxs-briefcase icon'></i>Instructor</a></li>
+					<li><a href="students.html"><i class='bx bxs-bus icon'></i>Students</a></li>
+				</ul>
+			</li>
+			<li class="divider" data-text="Reports">Reports</li>
+			<li>
+				<a href="#"><i class='bx bxs-notepad icon'></i> Grades Summary <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="dropOuts.html"><i class='bx bxs-detail'></i>&nbsp;&nbsp;&nbsp;Drop-outs</a></li>
+					<li><a href="studentCompletionForm.html"><i class='bx bxs-receipt'></i>&nbsp;&nbsp;&nbsp;Completion
+							Form</a></li>
+					<li><a href="studentDeficiency.html"><i class='bx bxs-report'></i>&nbsp;&nbsp;&nbsp;Student
+							Deficiency</a></li>
+					<li><a href="RTSemestralGrade.html"><i class='bx bxs-pencil'></i>&nbsp;&nbsp;&nbsp;Semestral
+							Grades</a></li>
+					<!-- <li><a href="#">Checkbox</a></li>
+					<li><a href="#">Radio</a></li> -->
+				</ul>
+			</li>
+			<li><a href="#" id="uploadFilesButton"><i class='bx bxs-file icon'></i> Upload Files</a></li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+
+	<!-- NAVBAR -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu toggle-sidebar'></i>
+			<form action="#">
+				<div class="form-group">
+					<input type="text" placeholder="Search...">
+					<i class='bx bx-search icon'></i>
+				</div>
+			</form>
+			<a href="#" class="nav-link notification-bell">
+				<i class='bx bxs-bell icon'></i>
+				<span class="badge"></span>
+			</a>
+			<div class="dropdown-menu notifications-dropdown hide">
+				<h4>Instructor Requests</h4>
+				<ul id="requestList">
+					<!-- Instructor request categories will be populated here -->
+				</ul>
+			</div>
+			<!-- <a href="#" class="nav-link">
+				<i class='bx bxs-message-square-dots icon'></i>
+				<span class="badge">8</span>
+			</a> -->
+			<span class="divider"></span>
+			<div class="profile">
+				<img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cGVvcGxlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+					alt="">
+				<ul class="profile-link">
+					<li><a href="changePassword.html"><i class='bx bxs-cog'></i> Change Password</a></li>
+					<li><a href="#" onclick="logout()"><i class='bx bxs-log-out-circle'></i> Logout</a></li>
+				</ul>
+			</div>
+		</nav>
+		<!-- NAVBAR -->
+
+		<!-- MAIN -->
+		<main>
+			<h1 class="title">Dashboard</h1>
+			<ul class="breadcrumbs">
+				<li><a href="#">Home</a></li>
+				<li class="divider">/</li>
+				<li><a href="#" class="active">Dashboard</a></li>
+			</ul>
+			<div class="info-data">
+				<div class="card">
+					<div class="head">
+						<div>
+							<h2>0</h2> <!-- Initially 0, will be updated dynamically -->
+							<p>Students Accounts</p>
+						</div>
+						<i class='bx bx-trending-up icon'></i>
+					</div>
+					<span class="progress" data-value="0%"></span> <!-- Progress will be updated dynamically -->
+					<span class="label">0%</span> <!-- Label will be updated dynamically -->
+				</div>
+				<div class="card">
+					<div class="head">
+						<div>
+							<h2>0</h2> <!-- Initially 0, will be updated dynamically for Instructors -->
+							<p>Instructor Accounts</p>
+						</div>
+						<i class='bx bx-trending-down icon'></i>
+					</div>
+					<span class="progress" data-value="0%"></span> <!-- Progress for Instructors -->
+					<span class="label">0%</span> <!-- Label for Instructors -->
+				</div>
+				<div class="card">
+					<div class="head">
+						<div>
+							<h2>0</h2>
+							<p>Subjects</p>
+						</div>
+						<i class='bx bx-trending-up icon'></i>
+					</div>
+					<span class="progress" data-value="0%"></span> <!-- Progress for Instructors -->
+					<span class="label">0%</span> <!-- Label for Instructors -->
+				</div>
+				<!-- <div class="card">
+					<div class="head">
+						<div>
+							<h2>999</h2>
+							<p>Reserve</p>
+						</div>
+						<i class='bx bx-trending-up icon'></i>
+					</div>
+					<span class="progress" data-value="100%"></span>
+					<span class="label">100%</span>
+				</div> -->
+			</div>
+
+
+			<!-- File Upload Dialog -->
+			<div id="fileUploadDialog" class="file-upload-dialog hide">
+				<div class="file-upload-content">
+					<h2>Upload File</h2>
+					<form id="fileUploadForm">
+						<input type="file" id="fileInput" />
+						<button type="button" id="uploadButton">Upload</button>
+						<button type="button" id="closeDialogButton">Close</button>
+					</form>
+					<div id="uploadStatus"></div> <!-- For displaying upload status -->
+				</div>
+			</div>
+
+
+		</main>
+		<!-- MAIN -->
+	</section>
+	<!-- NAVBAR -->
+	<script type="module">
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+		import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js"; // Ensure `remove` is imported
+		import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
+
+
+		// Firebase configuration
+		const firebaseConfig = {
+			apiKey: "AIzaSyAgplxh789FO-NDxHmKA49ro71tjYBU-JE",
+			authDomain: "icstmgsdb.firebaseapp.com",
+			databaseURL: "https://icstmgsdb-default-rtdb.firebaseio.com",
+			projectId: "icstmgsdb",
+			storageBucket: "icstmgsdb.appspot.com",
+			messagingSenderId: "619240877167",
+			appId: "1:619240877167:web:9402346b3d9e6e1f57b19a"
+		};
+
+		// Initialize Firebase
+		const app = initializeApp(firebaseConfig);
+		const database = getDatabase(app);
+		const storage = getStorage(app);
+
+		// Elements
+		const notificationBell = document.querySelector('.notification-bell');
+		const notificationsDropdown = document.querySelector('.notifications-dropdown');
+		const badge = document.querySelector('.badge');
+		const requestList = document.getElementById('requestList');
+
+		// Function to fetch and display requests
+		function fetchRequests() {
+			const requestsRef = ref(database, 'gradeRequests');
+
+			onValue(requestsRef, (snapshot) => {
+				requestList.innerHTML = '';  // Clear the current list
+				const data = snapshot.val();
+				let totalRequests = 0;
+
+				if (data) {
+					const instructorRequests = {};
+
+					Object.keys(data).forEach((key) => {
+						const request = data[key];
+						const instructorName = request.instructor;
+
+						// Group requests by instructor name
+						if (!instructorRequests[instructorName]) {
+							instructorRequests[instructorName] = [];
+						}
+						instructorRequests[instructorName].push({ ...request, id: key });
+						totalRequests++;
+					});
+
+					// Update the badge count based on total requests
+					badge.textContent = totalRequests;
+					badge.style.display = totalRequests > 0 ? 'inline-block' : 'none';  // Show or hide the badge
+
+					// Populate the dropdown with requests categorized by instructor
+					Object.keys(instructorRequests).forEach((instructor) => {
+						const instructorItem = document.createElement('li');
+						instructorItem.classList.add('instructor-category');
+						instructorItem.textContent = instructor;  // Set the instructor name as category header
+
+						const instructorRequestsList = document.createElement('ul');
+
+						instructorRequests[instructor].forEach((request) => {
+							const requestItem = document.createElement('li');
+							requestItem.classList.add('request-item');  // Add class for styling
+							requestItem.innerHTML = `
+                        <div class="request-content">
+                            <span class="request-text"><span class="request-label">Semester:</span> ${request.semester}</span>
+                            <span class="request-text"><span class="request-label">Subject:</span> ${request.subject}</span>
+                            <span class="request-text"><span class="request-label">Instructor:</span> ${instructor}</span>
+                        </div>
+                        <button class="delete-request" data-id="${request.id}">Delete</button>
+                    `;
+							instructorRequestsList.appendChild(requestItem);
+						});
+
+						instructorItem.appendChild(instructorRequestsList);
+						requestList.appendChild(instructorItem);
+					});
+
+					// Attach click event listeners to delete buttons
+					document.querySelectorAll('.delete-request').forEach(button => {
+						button.addEventListener('click', (event) => {
+							const requestId = event.target.getAttribute('data-id');
+							deleteRequest(requestId);
+						});
+					});
+
+				} else {
+					// If no requests found, show a message and hide the badge
+					requestList.innerHTML = '<li>No requests found.</li>';
+					badge.textContent = 0;
+					badge.style.display = 'none';  // Hide the badge when there are no requests
+				}
+			}, (error) => {
+				console.error("Error fetching requests: ", error);
+			});
+		}
+
+
+		// Function to delete a request from Firebase
+		function deleteRequest(requestId) {
+			const requestRef = ref(database, `gradeRequests/${requestId}`);
+			remove(requestRef)
+				.then(() => {
+					console.log(`Request ${requestId} deleted successfully.`);
+					fetchRequests();  // Refresh the requests after deletion
+				})
+				.catch((error) => {
+					console.error("Error deleting request: ", error);
+				});
+		}
+
+		// Toggle notifications dropdown visibility on bell icon click with animation
+		notificationBell.addEventListener('click', () => {
+			if (notificationsDropdown.classList.contains('hide') || notificationsDropdown.style.display === 'none') {
+				notificationsDropdown.classList.remove('hide');
+				notificationsDropdown.classList.add('show');
+				notificationsDropdown.style.display = 'block';  // Make sure the dropdown is set to block
+			} else {
+				notificationsDropdown.classList.remove('show');
+				notificationsDropdown.classList.add('hide');
+				setTimeout(() => {
+					notificationsDropdown.style.display = 'none';  // Hide the dropdown after the animation
+				}, 300);  // Match this duration with the CSS animation duration
+			}
+		});
+
+		// Fetch requests when the page is loaded
+		document.addEventListener('DOMContentLoaded', () => {
+			fetchRequests();
+		});
+
+
+
+
+
+
+		// Elements
+		const uploadFilesButton = document.getElementById('uploadFilesButton');
+		const fileUploadDialog = document.getElementById('fileUploadDialog');
+		const fileInput = document.getElementById('fileInput');
+		const uploadButton = document.getElementById('uploadButton');
+		const closeDialogButton = document.getElementById('closeDialogButton');
+		const uploadStatus = document.getElementById('uploadStatus');
+
+		// Show the file upload dialog when 'Upload Files' is clicked
+		uploadFilesButton.addEventListener('click', () => {
+			fileUploadDialog.classList.remove('hide');
+			fileUploadDialog.classList.add('show');
+		});
+
+		// Close the file upload dialog
+		closeDialogButton.addEventListener('click', () => {
+			fileUploadDialog.classList.remove('show');
+			fileUploadDialog.classList.add('hide');
+		});
+
+		// Handle file upload
+		uploadButton.addEventListener('click', () => {
+			const file = fileInput.files[0];
+			if (file) {
+				const storageReference = storageRef(storage, `requests/${file.name}`); // Store file in 'requests' folder
+
+				// Create a file upload task
+				const uploadTask = uploadBytesResumable(storageReference, file);
+
+				// Monitor file upload progress
+				uploadTask.on('state_changed',
+					(snapshot) => {
+						const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+						uploadStatus.textContent = `Upload is ${progress.toFixed(2)}% done`;
+					},
+					(error) => {
+						console.error('Error during file upload:', error);
+						uploadStatus.textContent = 'Upload failed. Please try again.';
+					},
+					() => {
+						// File upload completed successfully
+						getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+							console.log('File available at', downloadURL);
+							uploadStatus.textContent = 'Upload successful! File available at: ' + downloadURL;
+
+							// Optionally, you can save the file URL to Firebase Realtime Database or perform other actions here.
+						});
+					}
+				);
+			} else {
+				alert('Please select a file to upload.');
+			}
+		});
+	</script>
+
+	<script>
+		// Get logged-in username from localStorage
+		const username = localStorage.getItem('username');
+		if (!username) {
+			window.location.href = 'login.html';  // Redirect to login if not logged in
+		}
+		function logout() {
+			localStorage.removeItem('isLoggedIn');
+			localStorage.removeItem('username');
+			window.location.href = 'login.html';
+		}
+	</script>
+	<script src="assets/js/script.js"></script>
+	<script type="module" src="assets/js/count.js"></script>
+</body>
+
+</html>

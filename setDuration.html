@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="assets/img/logo_.png">
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+	<link rel="font-family" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<title>Set Duration</title>
+	<style>
+		h1 {
+			color: #333;
+		}
+
+		#timer-controls {
+			margin-bottom: 20px;
+
+			margin-left: 185px;
+		}
+
+		#duration {
+			padding: 5px;
+			margin-right: 10px;
+		}
+
+		button {
+			padding: 10px 15px;
+			margin-right: 10px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background-color: #45a049;
+		}
+
+		#end-timer {
+			background-color: #f44336;
+			/* Red background */
+		}
+
+		#end-timer:hover {
+			background-color: #d32f2f;
+			/* Darker red on hover */
+		}
+
+		#timer-display {
+			margin-top: 20px;
+			margin-left: 185px;
+		}
+
+		#timer {
+			font-size: 24px;
+			font-weight: bold;
+		}
+		/* File Upload Dialog */
+.file-upload-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 1000;
+    display: none;
+    border-radius: 10px;
+}
+
+.file-upload-dialog.show {
+    display: block;
+}
+
+.file-upload-dialog.hide {
+    display: none;
+}
+
+.file-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-upload-content h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.file-upload-content input[type="file"] {
+    margin-bottom: 20px;
+}
+
+#uploadStatus {
+    margin-top: 10px;
+    color: green;
+}
+	</style>
+</head>
+
+<body>
+
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		<a href="#" class="brand"><img src="assets/img/logo_.png" style="height: 40px; width: 30px; margin-left: 10px;">
+			&nbsp;&nbsp;&nbsp;Admin</a>
+		<ul class="side-menu">
+			<li><a href="Dashboard.html"><i class='bx bxs-dashboard icon'></i> Dashboard</a></li>
+			<li class="divider" data-text="main">Main</li>
+			<li><a href="setDuration.html" class="active"><i class='bx bxs-time icon'></i> Set Duration</a></li>
+			<li><a href="subjects.html"><i class='bx bxs-book icon'></i> Subjects</a></li>
+			<li><a href="grades.html"><i class='bx bxs-pen icon'></i> Grades</a></li>
+			<li>
+				<a href="#"><i class='bx bxs-user-detail icon'></i> User Accounts <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="instructors.html"><i class='bx bxs-briefcase icon'></i>Instructor</a></li>
+					<li><a href="students.html"><i class='bx bxs-bus icon'></i>Students</a></li>
+				</ul>
+			</li>
+			<li class="divider" data-text="Reports">Reports</li>
+			<li>
+				<a href="#"><i class='bx bxs-notepad icon'></i> Grades Summary <i
+						class='bx bx-chevron-right icon-right'></i></a>
+				<ul class="side-dropdown">
+					<li><a href="dropOuts.html"><i class='bx bxs-detail'></i>&nbsp;&nbsp;&nbsp;Drop-outs</a></li>
+					<li><a href="studentCompletionForm.html"><i class='bx bxs-receipt'></i>&nbsp;&nbsp;&nbsp;Completion Form</a></li>
+					<li><a href="studentDeficiency.html"><i class='bx bxs-report'></i>&nbsp;&nbsp;&nbsp;Student Deficiency</a></li>
+					<li><a href="RTSemestralGrade.html"><i class='bx bxs-pencil'></i>&nbsp;&nbsp;&nbsp;Semestral
+							Grades</a></li>
+					<!-- <li><a href="#">Checkbox</a></li>
+					<li><a href="#">Radio</a></li> -->
+				</ul>
+			</li>
+			<li><a href="#" id="uploadFilesButton"><i class='bx bxs-file icon'></i> Upload Files</a></li>
+		</ul>
+	</section>
+	<!-- SIDEBAR -->
+
+	<!-- NAVBAR -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu toggle-sidebar'></i>
+			<form action="#">
+				<div class="form-group">
+					<!-- <input type="text" placeholder="Search...">
+					<i class='bx bx-search icon'></i> -->
+				</div>
+			</form>
+			<a href="#" class="nav-link notification-bell">
+				<i class='bx bxs-bell icon'></i>
+				<span class="badge"></span>
+			</a>
+			<div class="dropdown-menu notifications-dropdown hide">
+				<h4>Instructor Requests</h4>
+				<ul id="requestList">
+					<!-- Instructor request categories will be populated here -->
+				</ul>
+			</div>	
+			<!-- <a href="#" class="nav-link">
+				<i class='bx bxs-message-square-dots icon'></i>
+				<span class="badge">8</span>
+			</a> -->
+			<span class="divider"></span>
+			<div class="profile">
+				<img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cGVvcGxlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+					alt="">
+				<ul class="profile-link">
+					<li><a href="changePassword.html"><i class='bx bxs-cog'></i> Change Password</a></li>
+					<li><a href="#" onclick="logout()"><i class='bx bxs-log-out-circle'></i> Logout</a></li>
+				</ul>
+			</div>
+		</nav>
+		<!-- NAVBAR -->
+
+		<!-- MAIN -->
+		<main>
+			<h1 class="title">Set Duration</h1>
+			<ul class="breadcrumbs">
+				<li><a href="#">Home</a></li>
+				<li class="divider">/</li>
+				<li><a href="#" class="active">Set Duration</a></li>
+			</ul>
+
+			<div class="data">
+				<div class="content-data">
+					<div id="timer-controls">
+						<label for="duration">Set Duration (Days):</label>
+						<input type="number" id="duration" placeholder="Enter duration (days)" step="0.01" />
+						<button id="set-timer">Set Timer</button>
+						<button id="apply-timer" hidden>Apply Timer to All</button>
+						<button id="end-timer">End Timer</button>
+					</div>
+					<div id="timer-display">
+						<h2>Current Duration:</h2>
+						<p id="timer">0 days, 0 hours, 0 minutes, 0 seconds</p>
+					</div>
+				</div>
+			</div>
+
+																<!-- File Upload Dialog -->
+<div id="fileUploadDialog" class="file-upload-dialog hide">
+    <div class="file-upload-content">
+        <h2>Upload File</h2>
+        <form id="fileUploadForm">
+            <input type="file" id="fileInput" />
+            <button type="button" id="uploadButton">Upload</button>
+            <button type="button" id="closeDialogButton">Close</button>
+        </form>
+        <div id="uploadStatus"></div> <!-- For displaying upload status -->
+    </div>
+</div>
+
+		</main>
+		<!-- MAIN -->
+	</section>
+	<!-- NAVBAR -->
+
+	<script type="module">
+		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+		import { getDatabase, ref, set, update, onValue, remove } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+		// Initialize Firebase
+		const firebaseConfig = {
+			apiKey: "AIzaSyAgplxh789FO-NDxHmKA49ro71tjYBU-JE",
+			authDomain: "icstmgsdb.firebaseapp.com",
+			databaseURL: "https://icstmgsdb-default-rtdb.firebaseio.com",
+			projectId: "icstmgsdb",
+			storageBucket: "icstmgsdb.appspot.com",
+			messagingSenderId: "619240877167",
+			appId: "1:619240877167:web:9402346b3d9e6e1f57b19a"
+		};
+
+		const app = initializeApp(firebaseConfig);
+		const db = getDatabase(app);
+
+		// Get logged-in username from localStorage
+		const username = localStorage.getItem('username');
+		if (!username) {
+			window.location.href = 'login.html';
+		}
+
+		// Store active timers for each instructor
+		const instructorTimers = new Map();
+
+		document.getElementById('set-timer').addEventListener('click', () => {
+			const durationInput = document.getElementById('duration').value;
+			if (durationInput && !isNaN(durationInput) && durationInput > 0) {
+				const durationMs = durationInput * 24 * 60 * 60 * 1000;
+				setTimerForAll(durationMs);
+			} else {
+				alert('Please enter a valid duration.');
+			}
+		});
+
+		document.getElementById('end-timer').addEventListener('click', () => {
+			endTimerForAll();
+		});
+
+		function setTimerForAll(durationMs) {
+			const instructorsRef = ref(db, 'normalLogin/instructor');
+			onValue(instructorsRef, (snapshot) => {
+				snapshot.forEach((instructorSnapshot) => {
+					const instructorKey = instructorSnapshot.key;
+					const lockRef = ref(db, `normalLogin/instructor/${instructorKey}`);
+					const timerEnd = Date.now() + durationMs;
+					update(lockRef, {
+						lock: 0,
+						timerEnd: timerEnd
+					});
+				});
+			}, { onlyOnce: true });
+
+			startWatchingInstructors();
+		}
+
+		function startWatchingInstructors() {
+			const instructorsRef = ref(db, 'normalLogin/instructor');
+			onValue(instructorsRef, (snapshot) => {
+				snapshot.forEach((instructorSnapshot) => {
+					const instructorKey = instructorSnapshot.key;
+					const instructorData = instructorSnapshot.val();
+
+					if (instructorData.lock === 1) {
+						// Stop timer and remove timerEnd for this instructor
+						if (instructorTimers.has(instructorKey)) {
+							clearInterval(instructorTimers.get(instructorKey));
+							instructorTimers.delete(instructorKey);
+
+							// Remove timerEnd field
+							const instructorRef = ref(db, `normalLogin/instructor/${instructorKey}/timerEnd`);
+							remove(instructorRef);
+						}
+					} else if (instructorData.timerEnd && instructorData.lock === 0) {
+						// Start or update timer for this instructor
+						if (!instructorTimers.has(instructorKey)) {
+							startLiveCountdown(instructorKey, instructorData.timerEnd);
+						}
+					}
+				});
+				updateTimerDisplay(snapshot);
+			});
+		}
+
+		function startLiveCountdown(instructorKey, endTime) {
+			if (instructorTimers.has(instructorKey)) {
+				clearInterval(instructorTimers.get(instructorKey));
+			}
+
+			const timer = setInterval(() => {
+				const now = Date.now();
+				const remaining = Math.max(0, endTime - now);
+
+				if (remaining <= 0) {
+					// Timer expired
+					clearInterval(timer);
+					instructorTimers.delete(instructorKey);
+
+					// Update database
+					const lockRef = ref(db, `normalLogin/instructor/${instructorKey}`);
+					update(lockRef, {
+						lock: 1
+					});
+
+					// Remove timerEnd field
+					const timerEndRef = ref(db, `normalLogin/instructor/${instructorKey}/timerEnd`);
+					remove(timerEndRef);
+				}
+
+				// Update display for this instructor
+				updateInstructorDisplay(instructorKey, remaining);
+			}, 1000);
+
+			instructorTimers.set(instructorKey, timer);
+		}
+
+		function updateInstructorDisplay(instructorKey, remaining) {
+			const instructorDisplayId = `timer-${instructorKey}`;
+			let displayElement = document.getElementById(instructorDisplayId);
+
+			if (!displayElement) {
+				displayElement = document.createElement('div');
+				displayElement.id = instructorDisplayId;
+				document.getElementById('timer').appendChild(displayElement);
+			}
+
+			if (remaining > 0) {
+				const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+				const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+				const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+				const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+				displayElement.innerHTML = `${instructorKey}: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+			} else {
+				displayElement.remove();
+			}
+		}
+
+		function updateTimerDisplay(snapshot) {
+			const timerContainer = document.getElementById('timer');
+			timerContainer.innerHTML = ''; // Clear existing display
+
+			let hasActiveTimers = false;
+
+			snapshot.forEach((instructorSnapshot) => {
+				const instructorData = instructorSnapshot.val();
+				if (instructorData.timerEnd && instructorData.lock === 0) {
+					hasActiveTimers = true;
+					const remaining = Math.max(0, instructorData.timerEnd - Date.now());
+					if (remaining > 0) {
+						updateInstructorDisplay(instructorSnapshot.key, remaining);
+					}
+				}
+			});
+
+			if (!hasActiveTimers) {
+				timerContainer.textContent = 'No active timers';
+			}
+		}
+
+		function endTimerForAll() {
+			const instructorsRef = ref(db, 'normalLogin/instructor');
+			onValue(instructorsRef, (snapshot) => {
+				snapshot.forEach((instructorSnapshot) => {
+					const instructorKey = instructorSnapshot.key;
+
+					// Clear the timer interval if it exists
+					if (instructorTimers.has(instructorKey)) {
+						clearInterval(instructorTimers.get(instructorKey));
+						instructorTimers.delete(instructorKey);
+					}
+
+					// Update database: set lock to 1 and remove timerEnd
+					const lockRef = ref(db, `normalLogin/instructor/${instructorKey}`);
+					update(lockRef, {
+						lock: 1
+					});
+
+					// Remove timerEnd field
+					const timerEndRef = ref(db, `normalLogin/instructor/${instructorKey}/timerEnd`);
+					remove(timerEndRef);
+				});
+			}, { onlyOnce: true });
+
+			document.getElementById('timer').textContent = 'No active timers';
+		}
+
+		function logout() {
+			localStorage.removeItem('isLoggedIn');
+			localStorage.removeItem('username');
+			window.location.href = 'login.html';
+		}
+
+		// Start watching instructors when the page loads
+		startWatchingInstructors();
+	</script>
+	<script type="module" src="assets/js/upload.js"></script>
+	<script src="assets/js/script.js"></script>
+</body>
+
+</html>
