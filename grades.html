@@ -219,18 +219,18 @@
 				</table>
 			</div>
 
-									<!-- File Upload Dialog -->
-<div id="fileUploadDialog" class="file-upload-dialog hide">
-    <div class="file-upload-content">
-        <h2>Upload File</h2>
-        <form id="fileUploadForm">
-            <input type="file" id="fileInput" />
-            <button type="button" id="uploadButton">Upload</button>
-            <button type="button" id="closeDialogButton">Close</button>
-        </form>
-        <div id="uploadStatus"></div> <!-- For displaying upload status -->
-    </div>
-</div>
+			<!-- File Upload Dialog -->
+			<div id="fileUploadDialog" class="file-upload-dialog hide">
+				<div class="file-upload-content">
+					<h2>Upload File</h2>
+					<form id="fileUploadForm">
+						<input type="file" id="fileInput" />
+						<button type="button" id="uploadButton">Upload</button>
+						<button type="button" id="closeDialogButton">Close</button>
+					</form>
+					<div id="uploadStatus"></div> <!-- For displaying upload status -->
+				</div>
+			</div>
 
 
 		</main>
@@ -271,24 +271,63 @@
 		// Reference to all grades in Firebase
 		const allGradesRef = ref(database, 'grades');
 
-		// Populate the grade select dropdown
-		get(allGradesRef).then((snapshot) => {
-			if (snapshot.exists()) {
-				const grades = snapshot.val();
-				const gradeSelect = document.getElementById('gradeSelect');
-				for (let grade in grades) {
-					const option = document.createElement('option');
-					option.value = grade;
-					option.textContent = grade;
-					gradeSelect.appendChild(option);
+		// Function to find the latest academic year and semester
+		async function findLatestPeriod() {
+			try {
+				const snapshot = await get(allGradesRef);
+				if (snapshot.exists()) {
+					const grades = snapshot.val();
+					const periods = Object.keys(grades);
+					
+					// Sort periods to find the latest
+					// Format of period keys: grade{year}_{semester}
+					// Example: grade2425_1stsem
+					periods.sort((a, b) => {
+						// Extract year part (e.g., 2425)
+						const yearA = a.split('_')[0].replace('grade', '');
+						const yearB = b.split('_')[0].replace('grade', '');
+						
+						if (yearA !== yearB) {
+							return yearB - yearA; // Sort by year descending
+						}
+						
+						// If same year, sort by semester
+						const semA = a.split('_')[1];
+						const semB = b.split('_')[1];
+						
+						// Define semester priority (higher number = later in academic year)
+						const semPriority = {
+							'1stsem': 1,
+							'2ndsem': 2,
+							'summer': 3,
+							'midyear': 4
+						};
+						
+						return semPriority[semB] - semPriority[semA];
+					});
+					
+					// Get the latest period (first after sorting)
+					if (periods.length > 0) {
+						const latestPeriod = periods[0];
+						// Extract year and semester from the period key
+						// Format: grade2425_1stsem
+						const year = latestPeriod.split('_')[0].replace('grade', '');
+						const semester = latestPeriod.split('_')[1];
+						
+						return { year, semester };
+					}
 				}
+				
+				// Default to current academic year and first semester if no data found
+				return { year: '2425', semester: '1stsem' };
+			} catch (error) {
+				console.error("Error finding latest period:", error);
+				return { year: '2425', semester: '1stsem' };
 			}
-		}).catch((error) => {
-			console.error("Error fetching grades:", error);
-		});
+		}
 
 		// Function to load grades based on selection
-		function loadGrades() {
+		async function loadGrades() {
 			const selectedSemester = document.getElementById('semesterSelect').value;
 			const selectedYear = document.getElementById('yearSelect').value;
 
@@ -301,7 +340,8 @@
 			const databasePath = `grade${selectedYear}_${selectedSemester}`;
 			const gradesRef = ref(database, `grades/${databasePath}/data`);
 
-			get(gradesRef).then((snapshot) => {
+			try {
+				const snapshot = await get(gradesRef);
 				if (snapshot.exists()) {
 					const grades = snapshot.val();
 					const tableBody = document.querySelector('#gradesTable tbody');
@@ -309,22 +349,22 @@
 
 					grades.forEach((grade) => {
 						const row = `
-                <tr>
-                    <td>${grade.id}</td>
-                    <td>${grade.studnum}</td>
-                    <td>${grade.acadyr}</td>
-                    <td>${grade.sem}</td>
-                    <td>${grade.mtotal}</td>
-                    <td>${grade.midterm}</td>
-                    <td>${grade.ftotal}</td>
-                    <td>${grade.final}</td>
-                    <td>${grade.finalgrade}</td>
-                    <td>${grade.equivalent}</td>
-                    <td>${grade.incfinal}</td>
-                    <td>${grade.possiblegrade}</td>
-                    <td>${grade.remarks}</td>
-                </tr>
-            `;
+							<tr>
+								<td>${grade.id}</td>
+								<td>${grade.studnum}</td>
+								<td>${grade.acadyr}</td>
+								<td>${grade.sem}</td>
+								<td>${grade.mtotal}</td>
+								<td>${grade.midterm}</td>
+								<td>${grade.ftotal}</td>
+								<td>${grade.final}</td>
+								<td>${grade.finalgrade}</td>
+								<td>${grade.equivalent}</td>
+								<td>${grade.incfinal}</td>
+								<td>${grade.possiblegrade}</td>
+								<td>${grade.remarks}</td>
+							</tr>
+						`;
 						tableBody.innerHTML += row;
 					});
 
@@ -343,17 +383,31 @@
 
 				} else {
 					console.log("No data available for selected grade");
+					alert("No data available for the selected semester and academic year");
 				}
-
-			}).catch((error) => {
-				console.error(error);
-			});
+			} catch (error) {
+				console.error("Error loading grades:", error);
+				alert("Error loading grades. Please try again.");
+			}
 		}
+
+		// Function to automatically select and load the latest period
+		async function initializeWithLatestData() {
+			const { year, semester } = await findLatestPeriod();
+			
+			// Set the dropdown values
+			document.getElementById('yearSelect').value = year;
+			document.getElementById('semesterSelect').value = semester;
+			
+			// Load the grades for the latest period
+			loadGrades();
+		}
+
+		// Initialize the page with the latest data when the page loads
+		document.addEventListener('DOMContentLoaded', initializeWithLatestData);
 
 		// Add event listener to the load button
 		document.getElementById('loadGradesBtn').addEventListener('click', loadGrades);
-
-
 
 		// Search functionality
 		window.filterTable = function () {
@@ -381,30 +435,11 @@
 			});
 		};
 
-		let sidebar = document.querySelector(".sidebar");
-		let sidebarBtn = document.querySelector(".sidebarBtn");
-		sidebarBtn.onclick = function () {
-			sidebar.classList.toggle("active");
-			if (sidebar.classList.contains("active")) {
-				sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
-			} else {
-				sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
-			}
-		}
-
-		// Dropdown toggle
-		let dropdownToggle = document.querySelectorAll('.dropdown-toggle');
-		dropdownToggle.forEach(toggle => {
-			toggle.addEventListener('click', function () {
-				this.parentElement.classList.toggle('active');
-			});
-		});
-
-		function logout() {
+		window.logout = function() {
 			localStorage.removeItem('isLoggedIn');
 			localStorage.removeItem('username');
 			window.location.href = 'login.html';
-		}
+		};
 	</script>
 	<script type="module" src="assets/js/upload.js"></script>
 	<script src="assets/js/script.js"></script>

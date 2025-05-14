@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="css/img/logo_.png" type="image/x-icon">
+    <link rel="icon" type="image/x-icon" href="assets/img/logo_.png">
+    <title>ICST Grading System</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+        
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 0;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #007f01;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: #007f01;
+            border-radius: 10px;
+            margin-right: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-img {
+            width: 38px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        
+        .logo-icon::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 6px;
+            transform: translate(-50%, -50%);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #007f01;
+        }
+        
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            min-height: calc(100vh - 100px);
+            position: relative;
+            padding: 50px 0;
+            margin-top: -30px;
+        }
+        
+        .hero-content {
+            flex: 1;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #222;
+            line-height: 1.2;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.8s ease forwards;
+        }
+        
+        .hero-title span {
+            color: #007f01;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 35px;
+            max-width: 550px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.8s ease 0.2s forwards;
+        }
+        
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .dashboard-preview {
+            width: 90%;
+            max-width: 600px;
+            aspect-ratio: 16/9;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 25px 50px -12px rgba(0, 127, 1, 0.2);
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.8s ease 0.4s forwards;
+        }
+        
+        .dashboard-header {
+            height: 10%;
+            background-color: #007f01;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .dashboard-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: white;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+        
+        .dashboard-content {
+            height: 90%;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .dashboard-card {
+            background-color: #f7f9fc;
+            border-radius: 8px;
+            animation: pulse 3s infinite alternate;
+        }
+        
+        .dashboard-card:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        
+        .dashboard-card:nth-child(3) {
+            animation-delay: 1s;
+        }
+        
+        /* Button Styles */
+        .btn {
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.8s ease 0.6s forwards;
+        }
+        
+        .btn-primary {
+            background-color: #007f01;
+            color: white;
+        }
+        
+        .btn-primary:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0s;
+            z-index: -1;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 10px 20px -10px rgba(0, 127, 1, 0.6);
+            transform: translateY(-3px);
+        }
+        
+        .btn-primary:hover:before {
+            left: 100%;
+            transition: 0.7s;
+        }
+        
+        /* Background Elements */
+        .bg-shape {
+            position: absolute;
+            z-index: 0;
+            border-radius: 50%;
+            filter: blur(60px);
+        }
+        
+        .bg-shape-1 {
+            width: 300px;
+            height: 300px;
+            background-color: rgba(0, 127, 1, 0.08);
+            top: 10%;
+            right: -150px;
+            animation: float 15s infinite alternate;
+        }
+        
+        .bg-shape-2 {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(0, 127, 1, 0.05);
+            bottom: -200px;
+            left: -100px;
+            animation: float 18s infinite alternate-reverse;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 50px;
+            color: #222;
+        }
+        
+        .section-title span {
+            color: #4361ee;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px -15px rgba(0, 127, 1, 0.15);
+        }
+        
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #e6f4e6;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: #007f01;
+            font-size: 1.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #222;
+        }
+        
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #fff;
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+        
+        .footer-text {
+            color: #777;
+        }
+        
+        /* Animations */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(30px, -30px);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                background-color: #f7f9fc;
+            }
+            100% {
+                background-color: #e6f4e6;
+            }
+        }
+        
+        /* Scroll Animations */
+        .scroll-animation {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .scroll-animation.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-description {
+                margin: 0 auto 35px;
+            }
+            
+            .hero-content, .hero-image {
+                margin-bottom: 50px;
+            }
+            
+            .dashboard-preview {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .dashboard-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Shapes -->
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+    
+    <div class="container">
+        <!-- Navigation -->
+        <nav>
+              <div class="logo">
+                <img src="assets/img/logo_.png" alt="ICST Logo" class="logo-img" />
+                ICST
+            </div>
+          
+        </nav>
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title"><span>Grading System</span> for ICST</h1>
+                <p class="hero-description">Streamline your academic evaluation process with our intuitive grading system ICST.</p>
+                <button class="btn btn-primary" id="login-btn">Login to System</button>
+            </div>
+            <div class="hero-image">
+                <div class="dashboard-preview">
+                    <div class="dashboard-header">
+                        <div class="dashboard-dot"></div>
+                        <div class="dashboard-dot"></div>
+                        <div class="dashboard-dot"></div>
+                    </div>
+                    <div class="dashboard-content">
+                        <div class="dashboard-card"></div>
+                        <div class="dashboard-card"></div>
+                        <div class="dashboard-card"></div>
+                        <div class="dashboard-card"></div>
+                        <div class="dashboard-card"></div>
+                        <div class="dashboard-card"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Login button functionality
+        document.getElementById('login-btn').addEventListener('click', function() {
+            // In a real implementation, this would redirect to your login page
+            window.location.href = "login.html"; // Replace with actual login page URL
+        });
+        
+        // Scroll animation
+        const scrollElements = document.querySelectorAll('.scroll-animation');
+        
+        const elementInView = (el, percentageScroll = 100) => {
+            const elementTop = el.getBoundingClientRect().top;
+            const elementHeight = el.offsetHeight;
+            const windowHeight = window.innerHeight;
+            
+            return (
+                elementTop <= windowHeight - (elementHeight * (percentageScroll/100))
+            );
+        };
+        
+        const displayScrollElement = (element) => {
+            element.classList.add('active');
+        };
+        
+        const handleScrollAnimation = () => {
+            scrollElements.forEach((el) => {
+                if (elementInView(el, 100)) {
+                    displayScrollElement(el);
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', () => {
+            handleScrollAnimation();
+        });
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            handleScrollAnimation();
+        });
+    </script>
+</body>
+</html>
